@@ -1,0 +1,69 @@
+.app {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+body {
+    background-color: #f7f5ef;
+}
+
+h1 {
+    font-size: 50px;
+}
+
+.pair {
+    display: flex;
+    gap: 24px;
+}
+
+.painting-card {
+    flex: 1;
+    min-width: 0;
+}
+
+.painting-card img {
+    display: block;
+    width: 100%;
+    height: 360px;
+    object-fit: contain;
+    background: #ebe8df;
+}
+
+button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background: #24594e;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    .pair {
+        flex-direction: column;
+    }
+
+    .app {
+        padding: 24px 16px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .painting-card img {
+        height: 280px;
+    }
+}
+
+button:hover {
+    background: #173e35;
+    border-color: #173e35;
+}
+
+button:focus-visible {
+    outline: 3px solid #a55a21;
+    outline-offset: 3px;
+}
