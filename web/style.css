@@ -67,3 +67,39 @@ button:focus-visible {
     outline: 3px solid #a55a21;
     outline-offset: 3px;
 }
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+#results {
+    margin-top: 24px;
+}
+
+#results p {
+    margin: 8px 0;
+}
+
+#nextButton {
+    max-width: 220px;
+}
+
+#stats,
+#storageStatus,
+footer {
+    font-size: 14px;
+}
+
+#storageStatus {
+    color: #8a460b;
+}

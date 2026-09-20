@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Art Preference Lab</title>
     <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
 </head>
 
 <body>
@@ -14,18 +15,29 @@
         <p>
             Look closely. There is no right or wrong answer.
         </p>
-        <div class="pair">
+        <div class="pair" id="pairArea">
+
             <section class="painting-card">
                 <h2>Painting A</h2>
-                <img src="img/76938.jpg" alt="Painting A for comparison">
-                <button>Choose A</button>
+                <img id="imgA" src="img/76938.jpg" alt="Painting A for comparison">
+                <button id="chooseA" type="button" disabled>Choose A</button>
             </section>
             <section class="painting-card">
                 <h2>Painting B</h2>
-                <img src="img/436940.jpg" alt="Painting B for comparison">
-                <button>Choose B</button>
+                <img id="imgB" src="img/436940.jpg" alt="Painting B for comparison">
+                <button id="chooseB" type="button" disabled>Choose B</button>
             </section>
         </div>
+        <section id="results" hidden aria-live="polite">
+            <p>Your choice:<span id="userChoice"></span></p>
+            <p>AI judges:<span id="judgesChoice"></span></p>
+            <p>Feature modl:<span id="modelChoice"></span></p>
+        </section>
+        <button id="nextButton" type="button" disabled>
+            Next pair
+        </button>
+        <p id="stats">Answered: 0</p>
+        <p id="storageStatus" role="status"></p>
         <footer>
             <p>Images: The Metropolitan Museum of Art, Open Access.</p>
         </footer>
