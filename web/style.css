@@ -90,7 +90,8 @@ button:disabled {
     margin: 8px 0;
 }
 
-#nextButton {
+#nextButton,
+#resetButton {
     max-width: 220px;
 }
 
