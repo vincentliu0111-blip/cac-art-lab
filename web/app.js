@@ -13,8 +13,46 @@ const storageStatus = document.querySelector("#storageStatus");
 const progress = document.querySelector("#progress");
 const message = document.querySelector("#message");
 const resetButton = document.querySelector("#resetButton");
+const featureList = document.querySelector("#featureList")
 const STORAGE_KEY = 'cac-art-lab-progress';
+const FEATURE_LABELS = {
+    O_symmetry_lr: "Left-right symmetry",
+    O_symmetry_tb: "Top-bottom symmetry",
+    O_balance_lr: "Left-right balance",
+    O_balance_tb: "Top-bottom balance",
+    O_centrality: "Visual centrality",
+    O_rule_of_thirds: "Rule-of-thirds alignment",
+    O_edge_orient_concentration: "Edge direction concentration",
+    O_hue_dominant_share: "Dominant hue share",
 
+    R_color_count: "Color count",
+    R_hue_entropy: "Hue entropy",
+    R_saturation_mean: "Mean saturation",
+    R_brightness_std: "Brightness variation",
+    R_edge_density: "Edge density",
+    R_texture_roughness: "Texture roughness",
+    R_local_entropy: "Local information",
+    R_high_freq_ratio: "High-frequency detail",
+
+    N_aspect_ratio: "Aspect ratio",
+    N_log_pixels: "Log pixel count",
+    N_bytes_per_pixel: "Bytes per pixel",
+    N_sharpness: "Sharpness",
+    N_brightness_mean: "Mean brightness",
+    N_contrast_p95_p05: "Contrast range",
+    N_dark_ratio: "Dark pixel share",
+    N_bright_ratio: "Bright pixel share",
+    N_grayscale_ratio: "Near-gray pixel share",
+    N_mean_r: "Mean red channel",
+    N_mean_g: "Mean green channel",
+    N_mean_b: "Mean blue channel"
+};
+
+const GROUP_LABELS = {
+    O: "Order",
+    R: "Richness",
+    N: "Unclassified"
+};
 let pairs = [];
 let answers = [];
 let currentIndex = 0;
@@ -34,7 +72,9 @@ function reveal() {
     userChoice.textContent = answers[currentIndex];
     judgesChoice.textContent = preferenceText(pair.q_A, 'weighted support');
     modelChoice.textContent = preferenceText(pair.model_q_A, 'predicted probability');
+    renderFeatures(pair);
     results.hidden = false;
+
 }
 function agreementText(field) {
     let matches = 0;
@@ -189,8 +229,36 @@ function resetRound() {
     }
     render();
 }
+function signed(value) {
+    if (value > 0) {
+        return "+" + value.toFixed(3);
+    } else {
+        return value.toFixed(3);
+    }
+}
+function featureText(feature) {
+    const label = FEATURE_LABELS[feature.name] || feature.name;
+    let comparison = 'A and B have the same value';
+    if (feature.delta > 0) comparison = 'A has a higher value';
+    if (feature.delta < 0) comparison = 'B has a higher value';
+    return `${label}: ${comparison}. ` +
+        `A - B: ${signed(feature.delta)}; ` +
+        `scaled A - B: ${signed(feature.scaled_delta)}.`;
+}
+
+function renderFeatures(pair) {
+    featureList.replaceChildren();
+    for (const feature of pair.top_features) {
+        const li = document.createElement('li');
+        li.className = 'feature-' + feature.group;
+        li.textContent = `[${GROUP_LABELS[feature.group]}] ` + featureText(feature);
+        featureList.append(li);
+
+    }
+}
 chooseA.addEventListener("click", () => choose("A"));
 chooseB.addEventListener("click", () => choose("B"));
 nextButton.addEventListener("click", nextPair);
 resetButton.addEventListener("click", resetRound);
 loadPairs();
+

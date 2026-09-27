@@ -104,3 +104,23 @@ footer {
 #storageStatus {
     color: #8a460b;
 }
+
+#featureList {
+    padding-left: 24px;
+}
+
+#featureList li {
+    margin: 10px 0;
+}
+
+.feature-O {
+    color: #24594e;
+}
+
+.feature-R {
+    color: #86451b;
+}
+
+.feature-N {
+    color: #555;
+}
