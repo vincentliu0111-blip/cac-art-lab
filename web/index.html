@@ -36,9 +36,44 @@
             <p>Feature model:<span id="modelChoice"></span></p>
             <h2>Feature differences</h2>
             <p>These differences describe the images.
-                They do not explain the model's decision
+                They do not explain the model's decision.
+                A higher value does not mean a painting is more beautiful.
             </p>
             <ul id="featureList"></ul>
+        </section>
+        <section id="roundSummary" hidden>
+            <h2>Your round summary</h2>
+
+            <p>
+                You and AI judges:
+                <span id="roundUserJudges"></span>
+            </p>
+
+            <p>
+                You and feature model:
+                <span id="roundUserModel"></span>
+            </p>
+
+            <p>
+                Feature model and AI judges, this set:
+                <span id="roundModelJudges"></span>
+            </p>
+
+            <p>
+                Full supplied dataset reference:
+                462/594 (77.8%) model/judges agreement.
+                This uses a different set of pairs.
+            </p>
+
+            <h2>Your strongest disagreements with the AI judges</h2>
+
+            <p>
+                Up to three pairs, ranked by the judges' support
+                for the option you did not choose.
+            </p>
+
+            <div id="disagreementList"></div>
+
         </section>
         <button id="nextButton" type="button" disabled>
             Next pair

@@ -13,7 +13,12 @@ const storageStatus = document.querySelector("#storageStatus");
 const progress = document.querySelector("#progress");
 const message = document.querySelector("#message");
 const resetButton = document.querySelector("#resetButton");
-const featureList = document.querySelector("#featureList")
+const featureList = document.querySelector("#featureList");
+const roundSummary = document.querySelector("#roundSummary");
+const roundUserJudges = document.querySelector("#roundUserJudges");
+const roundUserModel = document.querySelector("#roundUserModel");
+const roundModelJudges = document.querySelector("#roundModelJudges");
+const disagreementList = document.querySelector("#disagreementList");
 const STORAGE_KEY = 'cac-art-lab-progress';
 const FEATURE_LABELS = {
     O_symmetry_lr: "Left-right symmetry",
@@ -47,6 +52,7 @@ const FEATURE_LABELS = {
     N_mean_g: "Mean green channel",
     N_mean_b: "Mean blue channel"
 };
+
 
 const GROUP_LABELS = {
     O: "Order",
@@ -142,6 +148,7 @@ function restoreProgress() {
 }
 function render() {
     const finished = currentIndex === pairs.length;
+    roundSummary.hidden = !finished;
     renderStats();
 
     pairArea.hidden = finished;
@@ -151,6 +158,7 @@ function render() {
     if (finished) {
         progress.textContent = 'Round complete';
         message.textContent = 'You have compared every pair. Review your final statistics or restart the round.';
+        renderSummary();
         return;
     }
 
@@ -189,6 +197,7 @@ async function loadPairs() {
         render();
     } catch (error) {
         pairs = [];
+        roundSummary.hidden = true;
         pairArea.hidden = true;
         results.hidden = true;
         chooseA.disabled = true;
@@ -220,6 +229,11 @@ function resetRound() {
     if (pairs.length === 0) return;
     answers = [];
     currentIndex = 0;
+    featureList.replaceChildren();
+    disagreementList.replaceChildren();
+    roundUserJudges.textContent = "";
+    roundUserModel.textContent = "";
+    roundModelJudges.textContent = "";
     try {
         localStorage.removeItem(STORAGE_KEY);
         storageStatus.textContent = 'Round restarted. No saved answers.';
@@ -254,6 +268,91 @@ function renderFeatures(pair) {
         li.textContent = `[${GROUP_LABELS[feature.group]}] ` + featureText(feature);
         featureList.append(li);
 
+    }
+}
+function modelJudgeText() {
+    let matches = 0;
+    let total = 0;
+    for (const pair of pairs) {
+        const judge = preferredSide(pair.q_A);
+        const model = preferredSide(pair.model_q_A);
+        if (judge === 'Tie' || model === 'Tie') continue;
+        total += 1;
+        if (judge === model) matches += 1;
+    }
+    if (total === 0) {
+        return "No comparisons yet";
+    }
+
+    return `${matches}/${total} `
+        + `(${(100 * matches / total).toFixed(1)}%)`;
+}
+function getDisagreements() {
+    const items = [];
+    for (let i = 0; i < answers.length; i += 1) {
+        const pair = pairs[i];
+        const judge = preferredSide(pair.q_A);
+        if (judge === 'Tie' || answers[i] === judge) continue;
+        const score = answers[i] === 'A' ? 1 - pair.q_A : pair.q_A;
+        items.push({ pair, user: answers[i], index: i, score });
+    }
+    items.sort((a, b) => b.score - a.score || a.index - b.index);
+    return items.slice(0, 3);
+
+}
+function appendReview(item) {
+    const article = document.createElement("article");
+    article.className = "review-item";
+
+    const heading = document.createElement("h3");
+    heading.textContent = `Pair ${item.index + 1}`;
+
+    const detail = document.createElement("p");
+    detail.textContent =
+        `You: ${item.user}. AI judges: `
+        + preferenceText(item.pair.q_A, "weighted support");
+
+    const images = document.createElement("div");
+    images.className = "review-pair";
+
+    for (const side of ["A", "B"]) {
+        const figure = document.createElement("figure");
+
+        const caption = document.createElement("figcaption");
+        caption.textContent = "Painting " + side;
+
+        const img = document.createElement("img");
+        img.src = "img/" + item.pair["img_" + side];
+        img.alt =
+            "Painting " + side + " from pair " + (item.index + 1);
+
+        figure.append(caption, img);
+        images.append(figure);
+    }
+
+    article.append(heading, detail, images);
+    disagreementList.append(article);
+}
+function renderSummary() {
+    roundUserJudges.textContent = agreementText("q_A");
+    roundUserModel.textContent = agreementText("model_q_A");
+    roundModelJudges.textContent = modelJudgeText();
+
+    disagreementList.replaceChildren();
+
+    const items = getDisagreements();
+
+    if (items.length === 0) {
+        const p = document.createElement("p");
+        p.textContent =
+            "No disagreements with the AI judges in this round.";
+
+        disagreementList.append(p);
+        return;
+    }
+
+    for (const item of items) {
+        appendReview(item);
     }
 }
 chooseA.addEventListener("click", () => choose("A"));
