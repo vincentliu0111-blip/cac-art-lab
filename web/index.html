@@ -4,7 +4,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Art Preference Lab</title>
+    <title>Art Preference Quiz: Compare Your Taste With AI | CAC Art Lab</title>
+    <meta name="description" content="Choose between 60 pairs of public-domain artworks, compare your preferences with AI judges and a feature model, and review your results.">
+    <link rel="canonical" href="https://vincentliu.ai/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="CAC Art Lab">
+    <meta property="og:title" content="Art Preference Quiz: Compare Your Taste With AI">
+    <meta property="og:description" content="Choose between 60 artwork pairs, compare your taste with AI judges and a feature model, and review your results.">
+    <meta property="og:url" content="https://vincentliu.ai/">
+    <meta property="og:image" content="https://vincentliu.ai/img/436940.jpg">
+    <meta property="og:image:alt" content="A landscape artwork in the CAC Art Lab preference quiz">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+        {"@context":"https://schema.org","@type":"WebSite","name":"CAC Art Lab","url":"https://vincentliu.ai/"}
+    </script>
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
 </head>
@@ -14,6 +27,10 @@
         <h1>Which painting do you prefer?</h1>
         <p>
             Look closely. There is no right or wrong answer.
+        </p>
+        <p>
+            Compare 60 pairs of public-domain artworks from The Met's Open Access collection.
+            See how your choices compare with AI judges and a feature model.
         </p>
         <p id="progress">Loading paintings...</p>
         <p id="message" role="status">Please wait.</p>
@@ -83,6 +100,14 @@
         </button>
         <p id="stats">Answered: 0</p>
         <p id="storageStatus" role="status"></p>
+        <section aria-labelledby="aboutQuiz">
+            <h2 id="aboutQuiz">About this art preference quiz</h2>
+            <p>
+                Choose the artwork you prefer in each pair. After every choice, explore how the
+                AI judges and feature model compare. At the end, review your agreement rates and
+                strongest disagreements. <a href="about.html">How the comparison works</a>.
+            </p>
+        </section>
         <footer>
             <p>Images: The Metropolitan Museum of Art, Open Access.</p>
         </footer>
