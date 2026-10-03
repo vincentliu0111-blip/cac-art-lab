@@ -39,6 +39,14 @@ M1 读取画作、特征、AI 裁判结果和模型预测，完成数据处理�
 
 以实际数据为准：图片分类包含 283 幅 Paintings、16 幅 Miniatures 和 1 幅 Pastels & Oil Sketches on Paper；裁判结果中有 1 对的 `n_judges=5`，其余为 6。原始说明中的概括不用于修改这些数据。
 
+## 网站部署
+
+GitHub Pages 使用 `.github/workflows/pages.yml` 发布 `web/` 目录，网站根目录直接显示应用首页。此步骤不重新生成数据，也不运行 Python 或在线 AI。
+
+在仓库 Settings → Pages 中选择 GitHub Actions，并将 Custom domain 配置为 `vincentliu.ai`。域名解析和证书就绪后开启 Enforce HTTPS，正式访问地址为 https://vincentliu.ai/。
+
+向 `main` 推送网页或发布配置的修改会自动部署，也可在 Actions 中手动运行 Deploy CAC Art Lab。其他分支不会部署。原始 `Data/`、开发工具和本地检查资料不包含在网站发布目录中。
+
 ## 预览与使用网页
 
 在 VS Code 打开现有 `cac-art-lab` 项目与 `web/index.html`，通过已安装的 Preview Web 入口打开预览。修改后保存文件，并在预览中确认效果。
