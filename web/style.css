@@ -12,15 +12,6 @@ h1 {
     font-size: 50px;
 }
 
-.pair {
-    display: flex;
-    gap: 24px;
-}
-
-.painting-card {
-    flex: 1;
-    min-width: 0;
-}
 
 .painting-card img {
     display: block;
@@ -28,22 +19,12 @@ h1 {
     height: 360px;
     object-fit: contain;
     background: #ebe8df;
+    border-radius: 8px;
 }
 
-button {
-    width: 100%;
-    margin-top: 16px;
-    padding: 12px;
-    background: #24594e;
-    color: white;
-    font: inherit;
-    cursor: pointer;
-}
 
 @media (max-width: 700px) {
-    .pair {
-        flex-direction: column;
-    }
+
 
     .app {
         padding: 24px 16px;
@@ -58,15 +39,7 @@ button {
     }
 }
 
-button:hover {
-    background: #173e35;
-    border-color: #173e35;
-}
 
-button:focus-visible {
-    outline: 3px solid #a55a21;
-    outline-offset: 3px;
-}
 
 [hidden] {
     display: none !important;
@@ -77,10 +50,7 @@ body {
     line-height: 1.5;
 }
 
-button:disabled {
-    opacity: 0.55;
-    cursor: default;
-}
+
 
 #results {
     margin-top: 24px;
@@ -90,10 +60,6 @@ button:disabled {
     margin: 8px 0;
 }
 
-#nextButton,
-#resetButton {
-    max-width: 220px;
-}
 
 #stats,
 #storageStatus,
