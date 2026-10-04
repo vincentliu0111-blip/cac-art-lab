@@ -1,17 +1,18 @@
-.app {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 32px 24px;
-}
-
 body {
     background-color: #f7f5ef;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #203b34;
+
 }
 
-h1 {
-    font-size: 50px;
+.app {
+    max-width: 1080px;
 }
 
+[hidden] {
+    display: none !important;
+}
 
 .painting-card img {
     display: block;
@@ -22,43 +23,10 @@ h1 {
     border-radius: 8px;
 }
 
-
-@media (max-width: 700px) {
-
-
-    .app {
-        padding: 24px 16px;
-    }
-
-    h1 {
-        font-size: 28px;
-    }
-
-    .painting-card img {
-        height: 280px;
-    }
-}
-
-
-
-[hidden] {
-    display: none !important;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.5;
-}
-
-
-
-#results {
-    margin-top: 24px;
-}
-
 #results p {
     margin: 8px 0;
 }
+
 
 
 #stats,
@@ -91,10 +59,6 @@ footer {
     color: #555;
 }
 
-#roundSummary {
-    margin-top: 24px;
-}
-
 .review-item {
     margin: 24px 0;
 }
@@ -116,8 +80,12 @@ footer {
     object-fit: contain;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 767.98px) {
     .review-pair {
         flex-direction: column;
+    }
+
+    .painting-card img {
+        height: 280px;
     }
 }

@@ -20,13 +20,13 @@
     <script type="application/ld+json">
         {"@context":"https://schema.org","@type":"WebSite","name":"CAC Art Lab","url":"https://vincentliu.ai/"}
     </script>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
 </head>
 
 <body>
-    <main class="app">
+    <main class="app container py-4">
         <h1>Which painting do you prefer?</h1>
         <p>
             Look closely. There is no right or wrong answer.
@@ -63,46 +63,48 @@
                 <p>Your choice:<span id="userChoice"></span></p>
                 <p>AI judges:<span id="judgesChoice"></span></p>
                 <p>Feature model:<span id="modelChoice"></span></p>
-                <h2>Feature differences</h2>
+                <h2 class="h5">Feature differences</h2>
                 <p>These differences describe the images.
                     They do not explain the model's decision.
                     A higher value does not mean a painting is more beautiful.
                 </p>
                 <ul id="featureList"></ul>
+            </div>
         </section>
-        <section id="roundSummary" hidden>
-            <h2>Your round summary</h2>
+        <section id="roundSummary" class="card border-0 shadow-sm mt-4" hidden>
+            <div class="card-body p-4">
+                <h2>Your round summary</h2>
 
-            <p>
-                You and AI judges:
-                <span id="roundUserJudges"></span>
-            </p>
+                <p>
+                    You and AI judges:
+                    <span id="roundUserJudges"></span>
+                </p>
 
-            <p>
-                You and feature model:
-                <span id="roundUserModel"></span>
-            </p>
+                <p>
+                    You and feature model:
+                    <span id="roundUserModel"></span>
+                </p>
 
-            <p>
-                Feature model and AI judges, this set:
-                <span id="roundModelJudges"></span>
-            </p>
+                <p>
+                    Feature model and AI judges, this set:
+                    <span id="roundModelJudges"></span>
+                </p>
 
-            <p>
-                Full supplied dataset reference:
-                462/594 (77.8%) model/judges agreement.
-                This uses a different set of pairs.
-            </p>
+                <p>
+                    Full supplied dataset reference:
+                    462/594 (77.8%) model/judges agreement.
+                    This uses a different set of pairs.
+                </p>
 
-            <h2>Your strongest disagreements with the AI judges</h2>
+                <h2>Your strongest disagreements with the AI judges</h2>
 
-            <p>
-                Up to three pairs, ranked by the judges' support
-                for the option you did not choose.
-            </p>
+                <p>
+                    Up to three pairs, ranked by the judges' support
+                    for the option you did not choose.
+                </p>
 
-            <div id="disagreementList"></div>
-
+                <div id="disagreementList"></div>
+            </div>
         </section>
         <div class="d-flex flex-wrap gap-2 mt-4">
             <button id="nextButton" type="button" class="btn btn-dark" disabled>Next pair</button>

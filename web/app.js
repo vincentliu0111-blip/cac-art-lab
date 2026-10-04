@@ -189,6 +189,7 @@ async function loadPairs() {
             throw new Error(`HTTP ${response.status}`);
         }
         pairs = await response.json();
+        // pairs.length = 5
         if (!Array.isArray(pairs) || pairs.length === 0) {
             throw new Error('No painting pairs were loaded.');
         }
