@@ -19,7 +19,6 @@ const roundUserJudges = document.querySelector("#roundUserJudges");
 const roundUserModel = document.querySelector("#roundUserModel");
 const roundModelJudges = document.querySelector("#roundModelJudges");
 const disagreementList = document.querySelector("#disagreementList");
-const contribute = document.querySelector('#contribute');
 const collectionAvailability = document.querySelector('#collectionAvailability');
 const sessionCode = document.querySelector('#sessionCode');
 const retrySave = document.querySelector('#retrySave');
@@ -74,7 +73,6 @@ let artworks = {};
 let collectionConfig = null;
 let sessionId = null;
 let roundId = crypto.randomUUID();
-let consent = false;
 let events = [];
 let synced = [];
 let shownAt = null;
@@ -113,10 +111,12 @@ function updateImageState() {
         shownAt = new Date().toISOString();
         saveProgress();
     }
-    chooseA.disabled = answered || !ready;
-    chooseB.disabled = answered || !ready;
+    const savingAvailable = Boolean(collectionConfig?.endpoint && sessionId);
+    chooseA.disabled = answered || !ready || !savingAvailable;
+    chooseB.disabled = answered || !ready || !savingAvailable;
     retryImages.hidden = !imageFailure;
     if (!answered && imageFailure) message.textContent = 'An image could not load. Retry loading it before choosing.';
+    else if (!answered && !savingAvailable) message.textContent = 'Online saving is required before you can choose. Retry loading the quiz.';
     else if (!answered && !ready) message.textContent = 'Loading both paintings...';
     else if (!answered) message.textContent = 'Choose the painting you prefer to reveal the results.';
 }
@@ -189,7 +189,6 @@ function saveProgress() {
             datasetVersion: collectionConfig.datasetVersion,
             sessionId,
             roundId,
-            consent,
             events,
             synced,
             shownAt,
@@ -234,25 +233,20 @@ function restoreProgress() {
             && saved.synced.every(value => typeof value === 'boolean')
             && saved.sessionId === sessionId) {
             roundId = saved.roundId;
-            consent = saved.consent === true;
             events = saved.events;
             synced = saved.synced;
             // An unanswered pair is timed from the current page display after refresh.
             shownAt = null;
             displayedIndex = -1;
         } else if (answers.length) {
-            // Existing browser-only rounds stay local; historical choices are not uploaded.
-            consent = false;
+            // Preserve older browser-only answers without silently uploading them.
             events = answers.map(() => null);
             synced = answers.map(() => true);
         }
-        storageStatus.textContent = consent && !collectionConfig.endpoint
-            ? 'Online saving is unavailable. Your pending choice is kept here; retry when service returns.'
-            : 'Saved progress restored.';
+        storageStatus.textContent = 'Saved progress restored.';
     } catch (error) {
         answers = [];
         currentIndex = 0;
-        consent = false;
         events = [];
         synced = [];
         storageStatus.textContent = 'Saved progress could not be restored. Choose a painting to start again, or use Restart round.';
@@ -263,9 +257,11 @@ function render() {
     const finished = currentIndex === pairs.length;
     roundSummary.hidden = !finished;
     renderStats();
-    contribute.checked = consent;
-    contribute.disabled = answers.length > 0 || !collectionConfig?.endpoint || !sessionId;
-    resetButton.disabled = sending || (consent && synced.some(value => !value));
+    const earlierLocalChoices = events.filter(event => event === null).length;
+    collectionAvailability.textContent = earlierLocalChoices
+        ? `${earlierLocalChoices} earlier choice(s) from this browser were not uploaded under the previous settings. Every new choice is saved online before you continue.`
+        : 'Every choice is saved online before you continue. If saving fails, retry that choice.';
+    resetButton.disabled = sending || synced.some(value => !value);
     sessionCode.hidden = !collectionConfig?.endpoint || !sessionId;
     if (!sessionCode.hidden) sessionCode.textContent = `Anonymous browser ID for owner-assisted test: ${sessionId}`;
 
@@ -292,7 +288,7 @@ function render() {
     setPairImages(pair);
     progress.textContent = `Pair ${currentIndex + 1} of ${pairs.length}`;
 
-    const savedOnline = !consent || synced[currentIndex] === true;
+    const savedOnline = synced[currentIndex] === true;
     message.textContent = answered
         ? (savedOnline ? 'Choice recorded. Continue to the next pair.'
             : 'Choice is pending online saving. Retry if it does not complete.')
@@ -332,16 +328,13 @@ async function loadPairs() {
         } catch {
             sessionId = null;
         }
-        if (collectionConfig.endpoint && !/^https:\/\//.test(collectionConfig.endpoint)
-            && !/^http:\/\/127\.0\.0\.1(:\d+)?$/.test(collectionConfig.endpoint))
-            throw new Error('Invalid collection endpoint');
-        collectionAvailability.textContent = collectionConfig.endpoint && sessionId
-            ? 'Online contribution is configured. Check the box before your first answer to opt in; saving is confirmed after each choice.'
-            : 'Online contribution is currently unavailable. You can still play with browser-only progress.';
+        if (!sessionId || !collectionConfig.endpoint || (!/^https:\/\//.test(collectionConfig.endpoint)
+            && !/^http:\/\/127\.0\.0\.1(:\d+)?$/.test(collectionConfig.endpoint)))
+            throw new Error('Online saving unavailable');
         restoreProgress();
         resetButton.disabled = false;
         render();
-        if (consent && currentIndex < answers.length && !synced[currentIndex] && collectionConfig.endpoint)
+        if (currentIndex < answers.length && !synced[currentIndex])
             sendPendingChoice();
     } catch (error) {
         pairs = [];
@@ -353,8 +346,14 @@ async function loadPairs() {
         nextButton.disabled = true;
         resetButton.disabled = true;
         retryData.hidden = false;
-        progress.textContent = 'Paintings unavailable';
-        message.textContent = 'Could not load paintings or artwork information. Retry loading the data.';
+        const savingProblem = error.message === 'Online saving unavailable';
+        progress.textContent = savingProblem ? 'Online saving unavailable' : 'Paintings unavailable';
+        message.textContent = savingProblem
+            ? 'Online saving is required to choose a painting. Enable browser storage or retry loading the quiz.'
+            : 'Could not load paintings, artwork information, or the online saving setup. Retry loading the data.';
+        collectionAvailability.textContent = savingProblem
+            ? 'Choices are paused because online saving or browser storage is unavailable.'
+            : 'The quiz could not load. No choice has been recorded.';
         console.error('Could not load paintings:', error);
     }
 }
@@ -392,27 +391,27 @@ function choose(side) {
     const pair = pairs[currentIndex];
     const chosenAt = new Date().toISOString();
     const elapsedMs = Math.max(0, Date.parse(chosenAt) - Date.parse(shownAt));
-    events.push(consent ? {
+    events.push({
         id: crypto.randomUUID(), sessionId, roundId,
         datasetVersion: collectionConfig.datasetVersion, pairId: pair.pair_id,
         position: currentIndex + 1, aArtworkId: pair.img_A.replace('.jpg', ''),
         bArtworkId: pair.img_B.replace('.jpg', ''), choice: side,
         layout: window.matchMedia('(max-width: 767.98px)').matches ? 'stacked' : 'side-by-side',
         shownAt, chosenAt, elapsedMs
-    } : null);
-    synced.push(!consent);
-    if (!saveProgress() && consent) {
+    });
+    synced.push(false);
+    if (!saveProgress()) {
         answers.pop(); events.pop(); synced.pop();
-        storageStatus.textContent = 'Browser storage is required for safe online retries. Free space or use browser-only mode.';
+        storageStatus.textContent = 'Browser storage is required for safe online retries. Free space or enable browser storage before choosing.';
         return;
     }
     render();
-    if (consent) sendPendingChoice();
+    sendPendingChoice();
 }
 
 function nextPair() {
     if (currentIndex >= answers.length) return;
-    if (consent && !synced[currentIndex]) return;
+    if (!synced[currentIndex]) return;
 
     currentIndex += 1;
     saveProgress();
@@ -420,14 +419,13 @@ function nextPair() {
 }
 function resetRound() {
     if (pairs.length === 0) return;
-    if (sending || (consent && synced.some(value => !value))) {
+    if (sending || synced.some(value => !value)) {
         storageStatus.textContent = 'Finish saving the pending choice before restarting this round.';
         return;
     }
     answers = [];
     currentIndex = 0;
     roundId = crypto.randomUUID();
-    consent = false;
     events = [];
     synced = [];
     shownAt = null;
@@ -567,12 +565,6 @@ retrySave.addEventListener('click', sendPendingChoice);
 retryData.addEventListener('click', loadPairs);
 retryImages.addEventListener('click', () => {
     if (pairs[currentIndex]) setPairImages(pairs[currentIndex], true);
-});
-contribute.addEventListener('change', () => {
-    if (answers.length) return;
-    consent = contribute.checked;
-    saveProgress();
-    render();
 });
 for (const img of [imgA, imgB]) {
     img.addEventListener('load', updateImageState);

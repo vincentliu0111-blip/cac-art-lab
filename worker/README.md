@@ -1,6 +1,6 @@
 # Production choice collector
 
-The public site posts one explicitly consented selection at a time. Cloudflare Workers validates each event against the frozen 60-pair manifest and writes it to D1. No D1 credentials or owner token go into `web/`.
+The public site discloses mandatory online storage before a visitor chooses a painting, then posts one selection at a time. Cloudflare Workers validates each event against the frozen 60-pair manifest and writes it to D1. No D1 credentials or owner token go into `web/`.
 
 Setup for a new Cloudflare account:
 

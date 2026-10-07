@@ -22,7 +22,7 @@
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="app.js" defer></script>
+    <script src="app.js?v=20261006-mandatory" defer></script>
 </head>
 
 <body>
@@ -38,18 +38,19 @@
         </p>
         <section id="contributionPanel" class="card border-0 shadow-sm mb-4" aria-labelledby="contributionTitle">
             <div class="card-body">
-                <h2 id="contributionTitle" class="h5">Your choices and data contribution</h2>
-                <p>Progress stays in this browser. If you opt in, each choice is also saved in a
-                    central research database with an anonymous browser ID, round ID, pair and
-                    position, choice, display and choice times, elapsed time, and receipt time.
+                <h2 id="contributionTitle" class="h5">How your choices are saved</h2>
+                <p>The quiz sends every painting choice to a central research database. Choosing a
+                    painting sends its result with an anonymous browser ID, round ID, pair and
+                    position, A/B choice, display and choice times, elapsed time, and receipt time.
+                    Playing requires online saving; if you do not want your choices stored, please
+                    do not select a painting. Progress is also kept in this browser so you can return.
                     We do not ask for your name, email, or precise location. The hosting provider
                     may process network information such as your IP address in service logs.</p>
-                <label><input id="contribute" type="checkbox" disabled>
-                    Contribute my choices to the research database</label>
                 <p id="collectionAvailability" role="status">Checking online saving...</p>
                 <p id="sessionCode" hidden></p>
-                <p>You can play without contributing. Your selection is locked for this round after
-                    your first answer; restarting begins a new round and leaves received records intact.</p>
+                <p>You can continue only after each choice is confirmed saved online. If saving
+                    fails, retry the same choice. Restarting begins a new round and leaves previously
+                    received records intact.</p>
             </div>
         </section>
         <p id="progress">Loading paintings...</p>

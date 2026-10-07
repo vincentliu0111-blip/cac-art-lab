@@ -75,7 +75,7 @@ async function call(env, path, method = 'GET', body = null, token = null) {
     }), env);
 }
 
-test('frozen version, order, artwork, timing and consented payload shape', () => {
+test('frozen version, order, artwork, timing and choice payload shape', () => {
     const value = event();
     assert.equal(validateEvent(value, Date.parse('2026-10-07T00:00:00.000Z')), null);
     for (const change of [{ position: 2 }, { datasetVersion: 'other' }, { aArtworkId: '0' },
