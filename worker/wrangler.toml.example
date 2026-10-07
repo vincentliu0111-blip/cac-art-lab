@@ -1,0 +1,11 @@
+name = "cac-art-choice-collector"
+main = "worker.mjs"
+compatibility_date = "2026-10-06"
+
+[vars]
+ALLOWED_ORIGIN = "https://vincentliu.ai"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cac-art-choices"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"

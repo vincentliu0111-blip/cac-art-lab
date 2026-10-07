@@ -85,3 +85,6 @@ __pycache__/
 *.pyc
 .DS_Store
 .homework_check.json
+worker/wrangler.toml
+worker/dashboard_bundle.js
+worker/.wrangler/

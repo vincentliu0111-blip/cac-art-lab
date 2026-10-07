@@ -33,8 +33,25 @@
         </p>
         <p>
             Compare 60 pairs of public-domain artworks from The Met's Open Access collection.
-            See how your choices compare with AI judges and a feature model.
+            Choose by your own preference. After each choice, see how AI judges and a feature model
+            compare; at the end, see three agreement rates and your strongest disagreements.
         </p>
+        <section id="contributionPanel" class="card border-0 shadow-sm mb-4" aria-labelledby="contributionTitle">
+            <div class="card-body">
+                <h2 id="contributionTitle" class="h5">Your choices and data contribution</h2>
+                <p>Progress stays in this browser. If you opt in, each choice is also saved in a
+                    central research database with an anonymous browser ID, round ID, pair and
+                    position, choice, display and choice times, elapsed time, and receipt time.
+                    We do not ask for your name, email, or precise location. The hosting provider
+                    may process network information such as your IP address in service logs.</p>
+                <label><input id="contribute" type="checkbox" disabled>
+                    Contribute my choices to the research database</label>
+                <p id="collectionAvailability" role="status">Checking online saving...</p>
+                <p id="sessionCode" hidden></p>
+                <p>You can play without contributing. Your selection is locked for this round after
+                    your first answer; restarting begins a new round and leaves received records intact.</p>
+            </div>
+        </section>
         <p id="progress">Loading paintings...</p>
         <p id="message" role="status">Please wait.</p>
         <div id="pairArea" class="row g-4">
@@ -57,12 +74,14 @@
                 </section>
             </div>
         </div>
+        <button id="retryImages" type="button" class="btn btn-outline-secondary mt-3" hidden>Retry loading images</button>
 
         <section id="results" class="card border-0 shadow-sm mt-4" hidden aria-live="polite">
             <div class="card-body p-4">
                 <p>Your choice:<span id="userChoice"></span></p>
                 <p>AI judges:<span id="judgesChoice"></span></p>
                 <p>Feature model:<span id="modelChoice"></span></p>
+                <div id="artworkDetails"></div>
                 <h2 class="h5">Feature differences</h2>
                 <p>These differences describe the images.
                     They do not explain the model's decision.
@@ -108,6 +127,8 @@
         </section>
         <div class="d-flex flex-wrap gap-2 mt-4">
             <button id="nextButton" type="button" class="btn btn-dark" disabled>Next pair</button>
+            <button id="retrySave" type="button" class="btn btn-outline-danger" hidden>Retry saving choice</button>
+            <button id="retryData" type="button" class="btn btn-outline-secondary" hidden>Retry loading data</button>
             <button id="resetButton" type="button" class="btn btn-outline-secondary" disabled>
                 Restart round
             </button>
@@ -124,7 +145,8 @@
             </p>
         </section>
         <footer>
-            <p>Images: The Metropolitan Museum of Art, Open Access.</p>
+            <p>Images: The Metropolitan Museum of Art, Open Access. Each artwork's title and
+                collection link appear after you choose.</p>
         </footer>
     </main>
 

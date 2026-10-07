@@ -39,6 +39,15 @@ footer {
     color: #8a460b;
 }
 
+#collectionAvailability,
+#sessionCode {
+    font-size: 14px;
+}
+
+#artworkDetails p {
+    margin: 8px 0;
+}
+
 #featureList {
     padding-left: 24px;
 }
