@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore 5,326 public-domain paintings from The Metropolitan Museum of Art in CAC Art Lab.">
+  <link rel="canonical" href="https://vincentliu.ai/gallery.html">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="CAC Art Lab">
+  <meta property="og:title" content="Met Paintings — CAC Art Lab">
+  <meta property="og:description" content="Explore 5,326 public-domain paintings from The Met.">
+  <meta property="og:url" content="https://vincentliu.ai/gallery.html">
+  <meta property="og:image" content="https://vincentliu.ai/img/436940.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Met Paintings — CAC Art Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gallery.css">
+  <script type="module" src="gallery.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#galleryMain">Skip to the gallery</a>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="CAC Art Lab home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CAC <span class="brand-light">ART LAB</span></span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link" href="./" id="playLink">The experiment</a>
+        <a class="nav-link active" href="gallery.html" aria-current="page" id="galleryLink">Met gallery</a>
+        <a class="nav-link about-nav" href="about.html" id="aboutLink">The idea</a>
+      </nav>
+      <div class="header-actions"><span class="private-badge">◈ <span id="privateLabel">Public experience</span></span><button id="languageToggle" class="language-button" type="button">中文</button></div>
+    </header>
+
+    <main id="galleryMain">
+      <section class="met-hero">
+        <div><p class="eyebrow" id="eyebrow">THE MET · OPEN ACCESS</p><h1 id="heroTitle">A world of paintings.</h1><p class="intro" id="heroIntro">Explore 5,326 verified public-domain Paintings, created between 1300 and 1914. Follow a detail that catches your eye.</p></div>
+        <a class="primary-button" href="./" id="playButton">Try the 10-choice experience</a>
+      </section>
+      <div class="gallery-context" id="galleryContext">Browse all 5,326 Paintings. The visually screened choice deck has 2,860 pairs, with six AI-judge votes for every new pair.</div>
+      <section class="gallery-controls" aria-label="Filter artworks">
+        <label class="gallery-search-label" for="searchArt" id="searchLabel">Search artworks, artists, or Met IDs</label>
+        <input id="searchArt" class="gallery-search" type="search" autocomplete="off" placeholder="A title, artist, or number">
+        <div class="filter-row"><div class="period-filters" id="periodFilters" role="group" aria-label="Date range"></div><label class="pilot-filter"><input id="pilotOnly" type="checkbox"><span id="pilotLabel">First 500 new works</span></label></div>
+      </section>
+      <p id="resultCount" class="result-count" role="status"></p>
+      <div id="galleryGrid" class="met-grid" aria-live="off"></div>
+      <div class="load-more-wrap"><button id="loadMore" class="primary-button" type="button" hidden>See more paintings</button></div>
+      <div id="galleryError" class="empty-panel" hidden><h2 id="errorTitle">The gallery could not open.</h2><p id="errorText">Please check your connection and refresh this page.</p></div>
+    </main>
+    <footer class="site-footer"><span>✳ <span id="footerText">Images and artwork data: The Metropolitan Museum of Art Open Access (CC0)</span></span><a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener noreferrer" id="sourcePolicy">The Met Open Access</a></footer>
+  </div>
+
+  <dialog id="artDialog" class="artwork-dialog" aria-labelledby="dialogTitle">
+    <form method="dialog"><button class="dialog-close" aria-label="Close artwork details">×</button></form>
+    <div class="artwork-dialog-grid"><div class="detail-image"><img id="dialogImage" alt=""></div><div class="detail-copy"><p class="eyebrow" id="dialogEyebrow">FROM THE MET COLLECTION</p><h2 id="dialogTitle"></h2><p class="artist-name" id="dialogArtist"></p><p class="detail-date" id="dialogDate"></p><p class="detail-date" id="dialogMedium"></p><div class="detail-divider"></div><a id="dialogSource" class="primary-button" target="_blank" rel="noopener noreferrer">Explore at The Met</a><p class="caption" id="dialogNote">An online collection record does not mean this artwork is currently on view.</p></div></div>
+  </dialog>
+</body>
+</html>

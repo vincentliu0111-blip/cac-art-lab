@@ -1,4 +1,5 @@
 import manifest from './manifest.json' with { type: 'json' };
+import { handleExperience, adminExperience } from './experience.mjs';
 
 const PAIRS = new Map(manifest.pairs.map(pair => [pair.id, pair]));
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -98,6 +99,8 @@ async function saveEvent(request, env) {
 
 async function admin(request, env, path, url) {
     if (!await authorized(request, env)) return json({ ok: false, error: 'Unauthorized' }, 401);
+    if ((path === '/admin/experience-summary' || path === '/admin/experience.csv') && request.method === 'GET')
+        return adminExperience(env, url);
     if (path === '/admin/summary' && request.method === 'GET') {
         const rows = (await env.DB.prepare(`SELECT environment,dataset_version,
             COUNT(*) AS choices,COUNT(DISTINCT session_id) AS sessions
@@ -125,7 +128,9 @@ async function admin(request, env, path, url) {
             return json({ ok: false, error: 'Invalid session ID' }, 400);
         const prior = await env.DB.prepare('SELECT id FROM choices WHERE session_id = ? LIMIT 1')
             .bind(body.sessionId).first();
-        if (prior) return json({ ok: false, error: 'Register before the first choice' }, 409);
+        const experiencePrior = await env.DB.prepare('SELECT id FROM experience_choices WHERE session_id = ? LIMIT 1')
+            .bind(body.sessionId).first();
+        if (prior || experiencePrior) return json({ ok: false, error: 'Register before the first choice' }, 409);
         await env.DB.prepare('INSERT OR IGNORE INTO test_sessions VALUES (?,?)')
             .bind(body.sessionId, new Date().toISOString()).run();
         return json({ ok: true, sessionId: body.sessionId });
@@ -138,8 +143,10 @@ async function admin(request, env, path, url) {
         if (!registered) return json({ ok: false, error: 'Unknown test session' }, 404);
         const deleted = await env.DB.prepare("DELETE FROM choices WHERE session_id = ? AND environment = 'test'")
             .bind(session).run();
+        const experienceDeleted = await env.DB.prepare("DELETE FROM experience_choices WHERE session_id = ? AND environment = 'test'")
+            .bind(session).run();
         await env.DB.prepare('DELETE FROM test_sessions WHERE session_id = ?').bind(session).run();
-        return json({ ok: true, deleted: deleted.meta?.changes ?? 0 });
+        return json({ ok: true, deleted: (deleted.meta?.changes ?? 0) + (experienceDeleted.meta?.changes ?? 0) });
     }
     return json({ ok: false, error: 'Not found' }, 404);
 }
@@ -151,6 +158,7 @@ export default {
         if (path === '/health' && request.method === 'GET')
             return json({ ok: true, datasetVersion: manifest.version });
         if (path.startsWith('/admin/')) return admin(request, env, path, url);
+        if (path.startsWith('/experience/')) return handleExperience(request, env, url);
         const origin = request.headers.get('origin');
         if (path !== '/choices' || origin !== env.ALLOWED_ORIGIN)
             return json({ ok: false, error: 'Not found' }, 404);

@@ -1,156 +1,75 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Art Preference Quiz: Compare Your Taste With AI | CAC Art Lab</title>
-    <meta name="description"
-        content="Choose between 60 pairs of public-domain artworks, compare your preferences with AI judges and a feature model, and review your results.">
-    <link rel="canonical" href="https://vincentliu.ai/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="CAC Art Lab">
-    <meta property="og:title" content="Art Preference Quiz: Compare Your Taste With AI">
-    <meta property="og:description"
-        content="Choose between 60 artwork pairs, compare your taste with AI judges and a feature model, and review your results.">
-    <meta property="og:url" content="https://vincentliu.ai/">
-    <meta property="og:image" content="https://vincentliu.ai/img/436940.jpg">
-    <meta property="og:image:alt" content="A landscape artwork in the CAC Art Lab preference quiz">
-    <meta name="twitter:card" content="summary_large_image">
-    <script type="application/ld+json">
-        {"@context":"https://schema.org","@type":"WebSite","name":"CAC Art Lab","url":"https://vincentliu.ai/"}
-    </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script src="app.js?v=20261006-mandatory" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore 5,326 Met paintings, choose what you prefer, and compare your choices with AI in CAC Art Lab.">
+  <link rel="canonical" href="https://vincentliu.ai/">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="CAC Art Lab">
+  <meta property="og:title" content="CAC Art Lab — Follow your eye">
+  <meta property="og:description" content="Choose from 2,860 painting pairs and compare your preferences with AI.">
+  <meta property="og:url" content="https://vincentliu.ai/">
+  <meta property="og:image" content="https://vincentliu.ai/img/436940.jpg">
+  <meta property="og:image:alt" content="A painting in CAC Art Lab">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CAC Art Lab","url":"https://vincentliu.ai/"}</script>
+  <title>CAC Art Lab — Follow your eye</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231b2926'/%3E%3Cpath d='M10 10h8v8h-8zm12 0h8v8h-8zm-12 12h8v8h-8zm12 0h8v8h-8z' fill='%23def28c'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
 </head>
-
 <body>
-    <main class="app container py-4">
-        <h1>Which painting do you prefer?</h1>
-        <p>
-            Look closely. There is no right or wrong answer.
-        </p>
-        <p>
-            Compare 60 pairs of public-domain artworks from The Met's Open Access collection.
-            Choose by your own preference. After each choice, see how AI judges and a feature model
-            compare; at the end, see three agreement rates and your strongest disagreements.
-        </p>
-        <section id="contributionPanel" class="card border-0 shadow-sm mb-4" aria-labelledby="contributionTitle">
-            <div class="card-body">
-                <h2 id="contributionTitle" class="h5">How your choices are saved</h2>
-                <p>The quiz sends every painting choice to a central research database. Choosing a
-                    painting sends its result with an anonymous browser ID, round ID, pair and
-                    position, A/B choice, display and choice times, elapsed time, and receipt time.
-                    Playing requires online saving; if you do not want your choices stored, please
-                    do not select a painting. Progress is also kept in this browser so you can return.
-                    We do not ask for your name, email, or precise location. The hosting provider
-                    may process network information such as your IP address in service logs.</p>
-                <p id="collectionAvailability" role="status">Checking online saving...</p>
-                <p id="sessionCode" hidden></p>
-                <p>You can continue only after each choice is confirmed saved online. If saving
-                    fails, retry the same choice. Restarting begins a new round and leaves previously
-                    received records intact.</p>
-            </div>
-        </section>
-        <p id="progress">Loading paintings...</p>
-        <p id="message" role="status">Please wait.</p>
-        <div id="pairArea" class="row g-4">
-            <div class="col-12 col-md-6">
-                <section class="painting-card card h-100 border-0 shadow-sm">
-                    <div class="card-body p-3 p-lg-4">
-                        <h5>Painting A</h5>
-                        <img id="imgA" src="img/76938.jpg" alt="Painting A for comparison">
-                        <button id="chooseA" type="button" class="btn btn-dark w-100 mt-3 " disabled>Choose A</button>
-                    </div>
-                </section>
-            </div>
-            <div class="col-12 col-md-6">
-                <section class="painting-card card h-100 border-0 shadow-sm">
-                    <div class="card-body p-3 p-lg-4">
-                        <h5>Painting B</h5>
-                        <img id="imgB" src="img/436940.jpg" alt="Painting B for comparison">
-                        <button id="chooseB" type="button" class="btn btn-dark w-100 mt-3" disabled>Choose B</button>
-                    </div>
-                </section>
-            </div>
+  <a class="skip-link" href="#main">Skip to the artworks</a>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="CAC Art Lab home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CAC <span class="brand-light">ART LAB</span></span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link active" id="playNav" type="button" data-i18n="play">The experiment</button>
+        <a class="nav-link" href="gallery.html" data-i18n="metGallery">Met gallery</a>
+        <button class="nav-link" id="collectionNav" type="button"><span data-i18n="collection">Your collection</span><span class="count-badge" id="collectionCount">0</span></button>
+        <a class="nav-link about-nav" href="about.html" data-i18n="about">The idea</a>
+      </nav>
+      <div class="header-actions"><span class="private-badge"><span aria-hidden="true">◈</span> <span data-i18n="private">Public experience</span></span><button id="languageToggle" class="language-button" type="button" aria-label="Switch interface to Chinese">中文</button></div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <div id="loading" class="loading-panel" role="status"><span class="loading-art" aria-hidden="true"></span><p data-i18n="loading">Opening the gallery…</p></div>
+      <div id="loadError" class="empty-panel" hidden><p class="eyebrow">A SMALL PAUSE</p><h1 data-i18n="loadErrorTitle">The gallery couldn’t open.</h1><p data-i18n="loadErrorText">Check your connection and try again. Your saved picks will be here.</p><button id="retryLoad" class="primary-button" type="button" data-i18n="retry">Try again</button></div>
+
+      <section id="playView" hidden aria-labelledby="playTitle">
+        <div class="play-heading"><div><p class="eyebrow"><span class="mini-spark" aria-hidden="true">✳</span> <span data-i18n="eyebrow">A LITTLE ART. A LITTLE INSTINCT.</span></p><h1 id="playTitle" data-i18n="title">Trust your eye.</h1><p class="intro" data-i18n="intro">Which artwork do you prefer? Tap it to choose. There is no right answer.</p><p class="save-notice" data-i18n="saveNotice">Every choice or skip is saved online before you continue. Please do not choose if you do not want it saved.</p></div><button class="settings-button" id="settingsOpen" type="button"><span class="settings-icon" aria-hidden="true">☷</span><span data-i18n="settings">Make it yours</span><span class="optional-tag" data-i18n="optional">optional</span></button></div>
+        <div class="round-bar"><div class="round-caption"><span id="roundLabel">ROUND 01</span><span class="round-separator" aria-hidden="true">/</span><span id="pickLabel">PICK 01 OF 10</span></div><div class="progress-steps" id="progressSteps" aria-label="Round progress"></div><span class="round-note" data-i18n="roundNote">10 choices. A new perspective.</span></div>
+        <div class="art-stage" id="artStage">
+          <button class="art-card" id="chooseLeft" type="button" aria-label="Choose the left artwork"><span class="art-position"><span class="position-letter">A</span><span class="pick-indicator" aria-hidden="true">✓</span></span><span class="art-frame"><img id="leftImage" alt="Left artwork" decoding="async"></span><span class="art-choice"><span data-i18n="thisOne">Choose this one</span><span class="key-hint" aria-hidden="true">←</span></span></button>
+          <span class="versus" aria-hidden="true">or</span>
+          <button class="art-card" id="chooseRight" type="button" aria-label="Choose the right artwork"><span class="art-position"><span class="position-letter">B</span><span class="pick-indicator" aria-hidden="true">✓</span></span><span class="art-frame"><img id="rightImage" alt="Right artwork" decoding="async"></span><span class="art-choice"><span data-i18n="thisOne">Choose this one</span><span class="key-hint" aria-hidden="true">→</span></span></button>
         </div>
-        <button id="retryImages" type="button" class="btn btn-outline-secondary mt-3" hidden>Retry loading images</button>
+        <p id="pairNotice" class="pair-notice" role="status" hidden></p>
+        <div class="play-bottom"><p class="keyboard-tip" data-i18n="keyboard">Use ← → to choose · Space to skip</p><button id="skipPair" class="text-button" type="button" data-i18n="skip">Can’t decide? Skip this pair</button><span class="reveal-note"><span aria-hidden="true">✧</span> <span data-i18n="revealNote">Your perspective unfolds after the round.</span></span></div>
+      </section>
 
-        <section id="results" class="card border-0 shadow-sm mt-4" hidden aria-live="polite">
-            <div class="card-body p-4">
-                <p>Your choice:<span id="userChoice"></span></p>
-                <p>AI judges:<span id="judgesChoice"></span></p>
-                <p>Feature model:<span id="modelChoice"></span></p>
-                <div id="artworkDetails"></div>
-                <h2 class="h5">Feature differences</h2>
-                <p>These differences describe the images.
-                    They do not explain the model's decision.
-                    A higher value does not mean a painting is more beautiful.
-                </p>
-                <ul id="featureList"></ul>
-            </div>
-        </section>
-        <section id="roundSummary" class="card border-0 shadow-sm mt-4" hidden>
-            <div class="card-body p-4">
-                <h2>Your round summary</h2>
+      <section id="pendingView" class="empty-panel" hidden aria-live="polite"><h2 data-i18n="pendingTitle">Saving your choice…</h2><p data-i18n="pendingExplanation">Your next painting will appear after this choice is saved online.</p><button id="retrySave" class="primary-button" type="button" data-i18n="retrySave" hidden>Retry saving</button></section>
 
-                <p>
-                    You and AI judges:
-                    <span id="roundUserJudges"></span>
-                </p>
+      <section id="summaryView" hidden aria-labelledby="summaryTitle" tabindex="-1">
+        <div class="summary-heading"><p class="eyebrow" data-i18n="roundComplete">YOUR ROUND, REVEALED</p><h1 id="summaryTitle" data-i18n="summaryTitle">A point of view. Yours.</h1><p class="intro" id="summaryIntro"></p></div>
+        <div class="summary-grid"><article class="taste-card"><span class="eyebrow" data-i18n="smallDiscovery">A SMALL DISCOVERY</span><h2 id="insightTitle"></h2><p id="insightText"></p><div id="insightArtwork" class="insight-artwork"></div><span class="caption" data-i18n="insightLimit">A glimpse of this round, not a label for your taste.</span></article><div class="summary-side"><article class="ai-card"><div class="ai-card-top"><p class="eyebrow" data-i18n="youAndAI">YOU + AI JUDGES</p><span class="round-seal" aria-hidden="true">✳</span></div><div class="agreement"><span id="judgeScore">—</span><span class="agreement-unit" data-i18n="inCommon">in common</span></div><p id="judgeText"></p><div class="agreement-track" aria-hidden="true"><i id="agreementFill"></i></div><p class="model-comparison" id="modelText"></p><p id="unratedNote" class="caption" hidden></p><p class="caption" data-i18n="noScore">Different taste is the whole point. This isn’t a score.</p></article><button class="next-round-card" id="nextRound" type="button"><span><strong data-i18n="anotherRound">Follow your curiosity.</strong><span data-i18n="anotherRoundSub">A fresh set of artworks is waiting.</span></span><span class="circle-plus" aria-hidden="true">＋</span></button></div></div>
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="takeCloserLook">TAKE A CLOSER LOOK</p><h2 data-i18n="roundPicks">The art that caught your eye</h2></div><span class="section-meta" data-i18n="openArtwork">Select an artwork to discover its story.</span></div><div id="roundGallery" class="art-grid"></div><details class="comparison-details"><summary data-i18n="compareDetails">Explore each choice & AI comparison</summary><p class="caption" data-i18n="communityNote">Collected votes from this public experience, including your own choice.</p><div id="comparisonList"></div></details>
+      </section>
 
-                <p>
-                    You and feature model:
-                    <span id="roundUserModel"></span>
-                </p>
+      <section id="collectionView" hidden aria-labelledby="collectionTitle" tabindex="-1"><div class="collection-heading"><div><p class="eyebrow" data-i18n="personalGallery">YOUR PERSONAL GALLERY</p><h1 id="collectionTitle" data-i18n="collectionTitle">A trail of curiosity.</h1><p class="intro" id="collectionIntro"></p></div><button id="backToPlay" class="primary-button" type="button" data-i18n="backToPlay">Keep exploring</button></div><div id="collectionGrid" class="art-grid"></div><div id="collectionEmpty" class="empty-panel" hidden><span class="empty-spark" aria-hidden="true">✳</span><h2 data-i18n="collectionEmpty">Your eye will lead the way.</h2><p data-i18n="collectionEmptyText">Choose a few artworks and they’ll find a home here.</p></div></section>
 
-                <p>
-                    Feature model and AI judges, this set:
-                    <span id="roundModelJudges"></span>
-                </p>
-
-                <p>
-                    Full supplied dataset reference:
-                    462/594 (77.8%) model/judges agreement.
-                    This uses a different set of pairs.
-                </p>
-
-                <h2>Your strongest disagreements with the AI judges</h2>
-
-                <p>
-                    Up to three pairs, ranked by the judges' support
-                    for the option you did not choose.
-                </p>
-
-                <div id="disagreementList"></div>
-            </div>
-        </section>
-        <div class="d-flex flex-wrap gap-2 mt-4">
-            <button id="nextButton" type="button" class="btn btn-dark" disabled>Next pair</button>
-            <button id="retrySave" type="button" class="btn btn-outline-danger" hidden>Retry saving choice</button>
-            <button id="retryData" type="button" class="btn btn-outline-secondary" hidden>Retry loading data</button>
-            <button id="resetButton" type="button" class="btn btn-outline-secondary" disabled>
-                Restart round
-            </button>
-        </div>
-
-        <p id="stats">Answered: 0</p>
-        <p id="storageStatus" role="status"></p>
-        <section aria-labelledby="aboutQuiz">
-            <h2 id="aboutQuiz">About this art preference quiz</h2>
-            <p>
-                Choose the artwork you prefer in each pair. After every choice, explore how the
-                AI judges and feature model compare. At the end, review your agreement rates and
-                strongest disagreements. <a href="about.html">How the comparison works</a>.
-            </p>
-        </section>
-        <footer>
-            <p>Images: The Metropolitan Museum of Art, Open Access. Each artwork's title and
-                collection link appear after you choose.</p>
-        </footer>
+      <aside class="contribution-bar" id="contributionBar" hidden><div class="contribution-copy"><span class="contribution-icon" aria-hidden="true">◎</span><div><strong data-i18n="contribute">Each choice is saved online.</strong><p><span id="syncStatus" role="status" aria-live="polite"></span> <button id="privacyOpen" class="inline-button" type="button" data-i18n="whatSaved">What’s saved?</button></p></div></div><input id="contribute" type="checkbox" checked hidden></aside>
+      <p id="storageWarning" class="storage-warning" hidden role="status"></p>
     </main>
 
-</body>
+    <footer class="site-footer"><span><span class="footer-star" aria-hidden="true">✳</span> <span data-i18n="footerTag">Art is for everyone. So is having an opinion.</span></span><div><span data-i18n="sourceCredit">Artworks from The Met Open Access</span><span class="footer-dot" aria-hidden="true">·</span><a href="about.html" data-i18n="aboutLink">About this experiment</a></div></footer>
+  </div>
 
+  <dialog id="settingsDialog" aria-labelledby="settingsTitle"><form method="dialog"><button class="dialog-close" aria-label="Close settings" value="cancel">×</button></form><p class="eyebrow" data-i18n="optionalSetup">OPTIONAL, ALWAYS</p><h2 id="settingsTitle" data-i18n="settingsTitle">Come as you are.</h2><p class="dialog-intro" data-i18n="settingsIntro">A little context, if you feel like sharing. These choices won’t change which artworks you see.</p><fieldset><legend data-i18n="moodTitle">What’s your mood today?</legend><div id="moodOptions" class="chip-options"></div></fieldset><fieldset><legend data-i18n="interestsTitle">What tends to catch your eye?</legend><div id="interestOptions" class="chip-options"></div></fieldset><label class="field-label" for="profileLanguage" data-i18n="profileLanguage">Which language do you feel most at home in?</label><select id="profileLanguage"><option value="" data-i18n="preferNot">Prefer not to say</option><option value="en">English</option><option value="zh">中文</option><option value="es">Español</option><option value="fr">Français</option><option value="other" data-i18n="anotherLanguage">Another language / several languages</option></select><p class="caption" data-i18n="languageNote">Language is optional context, not a measure of culture or identity.</p><button class="primary-button dialog-done" id="settingsDone" type="button" data-i18n="done">Back to the art</button></dialog>
+
+  <dialog id="privacyDialog" aria-labelledby="privacyTitle"><form method="dialog"><button class="dialog-close" aria-label="Close privacy details">×</button></form><p class="eyebrow" data-i18n="yourChoice">YOUR CHOICE</p><h2 id="privacyTitle" data-i18n="privacyTitle">How choices are saved</h2><div class="privacy-text"><p data-i18n="privacyOne">Each choice, including a skip, is saved online before the next pair appears. If you do not want a choice saved, please do not take part.</p><p data-i18n="privacyTwo">The study saves random browser and round IDs, the pair and display order, your choice, time spent, a short source label, and any optional settings you provide.</p><p data-i18n="privacyThree">The app database does not store your name, email, or raw IP address. Cloudflare may process IP addresses in its network and service logs. No AI service is called when you choose.</p><p data-i18n="privacyFour">Previously received choices remain in the database after you close or restart the page. Contact the study owner to request removal.</p><p data-i18n="privacyFive">These votes are a convenience sample and do not represent the general public.</p></div></dialog>
+
+  <dialog id="artworkDialog" class="artwork-dialog" aria-labelledby="artworkTitle"><form method="dialog"><button class="dialog-close" aria-label="Close artwork details">×</button></form><div class="artwork-dialog-grid"><div class="detail-image"><img id="detailImage" alt=""></div><div class="detail-copy"><p class="eyebrow" data-i18n="fromCollection">FROM THE MET COLLECTION</p><h2 id="artworkTitle"></h2><p class="artist-name" id="detailArtist"></p><p class="detail-date" id="detailDate"></p><div class="detail-divider"></div><p class="detail-invitation" data-i18n="detailInvitation">Stay a little longer. Look for a detail you didn’t notice at first.</p><a id="detailSource" class="primary-button" target="_blank" rel="noopener noreferrer" data-i18n="viewMet">Explore at The Met</a><p class="caption" data-i18n="metNote">Opens the museum’s official collection page. An online record doesn’t mean the artwork is currently on view.</p></div></div></dialog>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+</body>
 </html>

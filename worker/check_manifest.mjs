@@ -1,13 +1,15 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import manifest from './manifest.json' with { type: 'json' };
+import experienceManifest from './experience_manifest.json' with { type: 'json' };
 
 const raw = fs.readFileSync(new URL('../web/app_data.json', import.meta.url));
 const pairs = JSON.parse(raw);
 const artworks = JSON.parse(fs.readFileSync(new URL('../web/artworks.json', import.meta.url)));
 const config = JSON.parse(fs.readFileSync(new URL('../web/collection_config.json', import.meta.url)));
 const digest = crypto.createHash('sha256').update(raw).digest('hex');
-if (digest !== manifest.appDataSha256 || config.datasetVersion !== manifest.version
+if (digest !== manifest.appDataSha256
+    || ![manifest.version, experienceManifest.version].includes(config.datasetVersion)
     || pairs.length !== manifest.pairs.length) throw new Error('Dataset version or fingerprint changed');
 for (let i = 0; i < pairs.length; i += 1) {
     const pair = pairs[i], expected = manifest.pairs[i];

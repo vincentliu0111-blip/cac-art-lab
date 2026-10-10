@@ -10,16 +10,19 @@ const config = JSON.parse(await readFile(new URL('../web/collection_config.json'
 if (!config.endpoint?.startsWith('https://')) throw new Error('No deployed collection endpoint');
 
 let path, method = 'GET', body;
-if (command === 'summary') path = '/admin/summary';
-else if (command === 'export-production' || command === 'export-test') {
+if (command === 'summary') path = '/admin/experience-summary';
+else if (command === 'summary-legacy') path = '/admin/summary';
+else if (['export-production', 'export-test', 'export-legacy-production', 'export-legacy-test'].includes(command)) {
     if (!argument) throw new Error('Provide an output CSV path');
-    const environment = command === 'export-test' ? 'test' : 'production';
-    path = `/admin/choices.csv?environment=${environment}&version=${encodeURIComponent(config.datasetVersion)}`;
+    const environment = command.endsWith('test') ? 'test' : 'production';
+    path = command.startsWith('export-legacy-')
+        ? `/admin/choices.csv?environment=${environment}&version=cac-60-2026-09-11-v1`
+        : `/admin/experience.csv?environment=${environment}`;
 } else if (command === 'register-test' && sessionPattern.test(argument || '')) {
     path = '/admin/test-sessions'; method = 'POST'; body = JSON.stringify({ sessionId: argument });
 } else if (command === 'delete-test' && sessionPattern.test(argument || '')) {
     path = `/admin/test-sessions/${argument}`; method = 'DELETE';
-} else throw new Error('Usage: owner_cli.mjs summary | export-production FILE | export-test FILE | register-test UUID | delete-test UUID');
+} else throw new Error('Usage: owner_cli.mjs summary | summary-legacy | export-production FILE | export-test FILE | export-legacy-production FILE | export-legacy-test FILE | register-test UUID | delete-test UUID');
 
 const response = await fetch(config.endpoint + path, {
     method,

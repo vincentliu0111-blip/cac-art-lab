@@ -13,6 +13,7 @@ class MemoryD1 {
             first: async () => {
                 if (sql.includes('FROM test_sessions'))
                     return this.testSessions.has(args[0]) ? { session_id: args[0] } : null;
+                if (sql.includes('FROM experience_choices')) return null;
                 if (sql.includes('WHERE id = ? OR')) {
                     const row = this.choices.find(r => r.id === args[0] ||
                         (r.session_id === args[1] && r.round_id === args[2]
@@ -41,6 +42,7 @@ class MemoryD1 {
                     this.choices = this.choices.filter(r => !(r.session_id === args[0] && r.environment === 'test'));
                     return { meta: { changes: before - this.choices.length } };
                 }
+                if (sql.startsWith('DELETE FROM experience_choices')) return { meta: { changes: 0 } };
                 if (sql.startsWith('DELETE FROM test_sessions')) {
                     this.testSessions.delete(args[0]); return { meta: { changes: 1 } };
                 }
