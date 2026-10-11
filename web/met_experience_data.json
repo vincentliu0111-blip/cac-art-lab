@@ -1,6 +1,6 @@
 {
-  "version": "follow-your-eye-met-paintings-v2",
-  "source": "The Met Open Access; 532 original Paintings pairs and 2,522 new six-judge-evaluated pairs were evaluated across all 5,326 Paintings. The active choice deck has 2,757 pairs after two visual suitability reviews; all works remain in the gallery and all evaluated results are retained. New pair-model predictions numerically reproduce the original 28-feature plus CLIP method; individual model utilities are not absolute artwork scores. The original frozen-weight byte fingerprint does not match in this runtime. All 5,043 new works also have four separate display descriptors measured from their local resized JPEGs.",
+  "version": "follow-your-eye-met-paintings-v3",
+  "source": "The Met Open Access; 532 original Paintings pairs and 2,522 new six-judge-evaluated pairs were evaluated across all 5,326 Paintings. The active choice deck has 2,751 pairs after two visual suitability reviews; all works remain in the gallery and all evaluated results are retained. New pair-model predictions numerically reproduce the original 28-feature plus CLIP method; individual model utilities are not absolute artwork scores. The original frozen-weight byte fingerprint does not match in this runtime. All 5,043 new works also have four separate display descriptors measured from their local resized JPEGs.",
   "artworks": {
     "36023": {
       "id": "36023",
@@ -254506,16 +254506,6 @@
       "modelSource": "study-numerical-reproduction-v1"
     },
     {
-      "id": "met-436537-436638",
-      "a": "436537",
-      "b": "436638",
-      "period": "1300-1599",
-      "qA": 0.6585,
-      "modelQA": 0.697,
-      "ratingSource": "six-judge-met-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
       "id": "met-929154-51646",
       "a": "929154",
       "b": "51646",
@@ -255352,16 +255342,6 @@
       "period": "1600-1799",
       "qA": 0.4591,
       "modelQA": 0.5401,
-      "ratingSource": "six-judge-met-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
-      "id": "met-38347-45767",
-      "a": "38347",
-      "b": "45767",
-      "period": "1600-1799",
-      "qA": 0,
-      "modelQA": 0.1064,
       "ratingSource": "six-judge-met-v1",
       "modelSource": "study-numerical-reproduction-v1"
     },
@@ -259432,16 +259412,6 @@
       "period": "1300-1599",
       "qA": 0.5031,
       "modelQA": 0.4266,
-      "ratingSource": "six-judge-met-all-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
-      "id": "met-45670-55324",
-      "a": "45670",
-      "b": "55324",
-      "period": "1300-1599",
-      "qA": 0.8882,
-      "modelQA": 0.6572,
       "ratingSource": "six-judge-met-all-v1",
       "modelSource": "study-numerical-reproduction-v1"
     },
@@ -265066,16 +265036,6 @@
       "modelSource": "study-numerical-reproduction-v1"
     },
     {
-      "id": "met-671044-853210",
-      "a": "671044",
-      "b": "853210",
-      "period": "1600-1799",
-      "qA": 0.2012,
-      "modelQA": 0.2167,
-      "ratingSource": "six-judge-met-all-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
       "id": "met-53421-45721",
       "a": "53421",
       "b": "45721",
@@ -265412,16 +265372,6 @@
       "period": "1600-1799",
       "qA": 0,
       "modelQA": 0.5183,
-      "ratingSource": "six-judge-met-all-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
-      "id": "met-48946-853197",
-      "a": "48946",
-      "b": "853197",
-      "period": "1600-1799",
-      "qA": 0.2012,
-      "modelQA": 0.4028,
       "ratingSource": "six-judge-met-all-v1",
       "modelSource": "study-numerical-reproduction-v1"
     },
@@ -269132,16 +269082,6 @@
       "period": "1600-1799",
       "qA": 1,
       "modelQA": 0.9275,
-      "ratingSource": "six-judge-met-all-v1",
-      "modelSource": "study-numerical-reproduction-v1"
-    },
-    {
-      "id": "met-435639-437986",
-      "a": "435639",
-      "b": "437986",
-      "period": "1600-1799",
-      "qA": 0.8442,
-      "modelQA": 0.7449,
       "ratingSource": "six-judge-met-all-v1",
       "modelSource": "study-numerical-reproduction-v1"
     },
@@ -277140,10 +277080,10 @@
     "method": "met-contact-sheet-visual-screen-v1-plus-quality-review-v2",
     "screenedArtworks": 4543,
     "additionalContactSheetArtworks": 783,
-    "excludedArtworks": 360,
-    "removedPairs": 297,
-    "additionalExcludedArtworks": 95,
-    "additionalRemovedPairs": 103
+    "excludedArtworks": 368,
+    "removedPairs": 303,
+    "additionalExcludedArtworks": 103,
+    "additionalRemovedPairs": 109
   },
   "openingPairs": [
     "met-74986-74999",
@@ -277160,18 +277100,10 @@
     "met-436984-437912",
     "met-61712-51409",
     "met-437740-51743",
-    "met-436537-436638",
-    "met-45670-55324",
     "met-435940-437832",
     "met-435760-437530",
-    "met-74658-36436",
     "met-437233-38012",
-    "met-48946-853197",
-    "met-38347-45767",
-    "met-77179-816209",
     "met-752009-437393",
-    "met-671044-853210",
-    "met-435639-437986",
     "eaf7ef524a3e6ebd",
     "met-437173-77184",
     "met-437956-37914",
@@ -277181,7 +277113,6 @@
     "met-38023-37947",
     "met-435596-437532",
     "met-37917-438117",
-    "met-38033-53591",
     "met-438105-37948",
     "7969dace937058b9",
     "met-436543-436542",

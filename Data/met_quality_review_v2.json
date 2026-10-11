@@ -3,12 +3,13 @@
   "date": "2026-10-11",
   "sourceVersion": "follow-your-eye-met-paintings-v1",
   "sourceSha256": "0abdbc31726c8c650928fd18952b57d214011f8bab6ad2022c92447e17e6d0fd",
-  "scope": "All 4,938 active artwork JPEGs were checked for display dimensions. The 783 active artworks outside the prior 4,543-work visual screen were reviewed in 16 contact sheets. Two prominent-frame examples were inspected individually, including one found in a random first pair. The prior visual sheets were revisited around a taped-photograph cluster found in a random first pair. A final low-sharpness check found two additional images with visible display mounts.",
+  "scope": "All 4,938 active artwork JPEGs were checked for display dimensions. The 783 active artworks outside the prior 4,543-work visual screen were reviewed in 16 contact sheets. Two prominent-frame examples were inspected individually, including one found in a random first pair. The prior visual sheets were revisited around a taped-photograph cluster found in a random first pair. A final low-sharpness check found two additional images with visible display mounts. A live screenshot of randomized opening cards revealed framed paintings and museum photographs with measurement scales; these were excluded from choice pairs.",
   "criteria": {
     "short_side_under_250_px": "The displayed JPEG has a short side below 250 pixels and appears too small when scaled into a choice card.",
     "text_dominant_manuscript": "The picture is mainly manuscript text rather than a legible painting choice.",
     "prominent_frame_or_mount": "A photographed frame or display mount takes a prominent part of the choice image.",
-    "photographed_with_visible_clips_or_mount": "The museum image shows tape, clips, or a temporary mount around the artwork."
+    "photographed_with_visible_clips_or_mount": "The museum image shows tape, clips, or a temporary mount around the artwork.",
+    "museum_photograph_with_measurement_scale": "The museum photograph includes black display backing and a visible measurement scale beside the artwork."
   },
   "excluded": {
     "35155": {
@@ -89,6 +90,12 @@
       "height": 624,
       "sha256": "755551a5ab5427312dd1111fa0b8030858df490af1eeab478a455bc5696785b5"
     },
+    "45670": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 600,
+      "height": 800,
+      "sha256": "0ffe5107a08fcb19953412896c76c694d8de20eb1a45281d860d7e4de287626d"
+    },
     "45683": {
       "reason": "short_side_under_250_px",
       "width": 800,
@@ -113,6 +120,12 @@
       "height": 800,
       "sha256": "919c2586a60b1af9853c7ece3ec2fbb5a42a42d745afb1cc0c9c67ab77f5673b"
     },
+    "45767": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 600,
+      "height": 800,
+      "sha256": "8fccaa1a63acb1d9ed925998ea48b0dbbc95a9883ef2ab53294589d1e72cd87e"
+    },
     "45788": {
       "reason": "short_side_under_250_px",
       "width": 242,
@@ -130,6 +143,12 @@
       "width": 205,
       "height": 800,
       "sha256": "5b724da75865b266c7bb5fc50d66d6a7fbf21d3ac617f37c2a7fb0cf743941bd"
+    },
+    "48946": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 600,
+      "height": 800,
+      "sha256": "8d5b4205532ab6ad5a1180fa4c8223b2486faaaf489aeb3c7303462c9b89bee5"
     },
     "48989": {
       "reason": "short_side_under_250_px",
@@ -196,6 +215,12 @@
       "width": 196,
       "height": 800,
       "sha256": "9de9c5e1d4234ba66bd36eaf880314b1ece4e95943924cef3d4b37be63b15fc8"
+    },
+    "55324": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 600,
+      "height": 800,
+      "sha256": "41b64f44f29d7b871bade0810c52e1be53280c7ac00412c3d993086da490f957"
     },
     "55384": {
       "reason": "short_side_under_250_px",
@@ -413,6 +438,12 @@
       "height": 378,
       "sha256": "d926b7065f998ba4fe50cae1a7ba215510916da2be9b48b45cdfccdf8ca569d3"
     },
+    "435639": {
+      "reason": "prominent_frame_or_mount",
+      "width": 800,
+      "height": 595,
+      "sha256": "caf04ce8f3fbfc62fb0c5d8196ef6dabfdc4f013d4c6034178156b5f781319a3"
+    },
     "435705": {
       "reason": "short_side_under_250_px",
       "width": 800,
@@ -424,6 +455,12 @@
       "width": 800,
       "height": 246,
       "sha256": "2555778f0d576ca3f7cc84111705a7eedd60a62fcb9efcece08fcb2c84650c6a"
+    },
+    "436537": {
+      "reason": "prominent_frame_or_mount",
+      "width": 548,
+      "height": 800,
+      "sha256": "34426ad301657e2c53c4ea40002c098dbb65355b24d0fd1b33bd14628487124c"
     },
     "436730": {
       "reason": "short_side_under_250_px",
@@ -569,6 +606,18 @@
       "height": 179,
       "sha256": "4fbbde52cd69891cf5f6c534e95096dc45f49e77de1ca65c44cfe6af06f00263"
     },
+    "853197": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 600,
+      "height": 800,
+      "sha256": "ff8d7ca583e997124fac42d759a6257b5e01e4e52f4fb761f2c1599ebfa0f04c"
+    },
+    "853210": {
+      "reason": "museum_photograph_with_measurement_scale",
+      "width": 599,
+      "height": 800,
+      "sha256": "34604bd129828289506c1abb0fac90ccc91255844b00f18268b10dd0dfbd07d5"
+    },
     "904714": {
       "reason": "short_side_under_250_px",
       "width": 590,
@@ -685,7 +734,13 @@
     "met-75157-76945",
     "met-51765-76950",
     "met-37851-928091",
-    "met-51293-435673"
+    "met-51293-435673",
+    "met-436537-436638",
+    "met-38347-45767",
+    "met-45670-55324",
+    "met-671044-853210",
+    "met-48946-853197",
+    "met-435639-437986"
   ],
-  "activePairCount": 2757
+  "activePairCount": 2751
 }

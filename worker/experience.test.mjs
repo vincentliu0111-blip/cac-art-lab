@@ -47,7 +47,7 @@ async function call(env, path, method='GET', body=null, token=null, options={}) 
 }
 
 test('screened pairs and required online event fields', () => {
-  assert.equal(manifest.pairs.length,2757);
+  assert.equal(manifest.pairs.length,2751);
   const good=event();
   assert.equal(validateExperienceEvent(good),null);
   assert.equal(validateExperienceEvent({...good,choice:'skip'}),null);

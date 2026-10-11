@@ -6,7 +6,7 @@
 
 ## Current public dataset
 
-- `follow-your-eye-met-paintings-v2`: 2,757 active pairs and a searchable gallery of 5,326 verified Met Open Access Paintings. The 2,279 active newer pairs have six AI-judge votes and numerical feature-model predictions. A second image review removed 103 unsuitable pairs from the previous 2,860-pair deck. See `Data/met_quality_review_v2.json` for the exact exclusions and `web/about.html` for the distinction between measured features, predictions and preferences. The first three positions of a fresh round draw from 61 manually reviewed pairs while unused ones remain; see `Data/met_opening_pairs_v1.json`.
+- `follow-your-eye-met-paintings-v3`: 2,751 active pairs and a searchable gallery of 5,326 verified Met Open Access Paintings. The 2,273 active newer pairs have six AI-judge votes and numerical feature-model predictions. A second image review removed 109 unsuitable pairs from the previous 2,860-pair deck. See `Data/met_quality_review_v2.json` for the exact exclusions and `web/about.html` for the distinction between measured features, predictions and preferences. The first three positions of a fresh round draw from 52 manually reviewed pairs while unused ones remain; see `Data/met_opening_pairs_v1.json`.
 - The original 60-pair dataset and its records remain separate in the collector. Its historical app data and 106 web thumbnails remain in this repository; they are not mixed with current results.
 - `web/met_experience_data.json`, `web/met_catalog.json` and `web/met-art/` supply the public experience. The 5,326 resized JPEGs are derived from Met Open Access images; the full originals and model checkpoints are not part of the website.
 

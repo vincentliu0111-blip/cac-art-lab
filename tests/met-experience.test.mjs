@@ -28,15 +28,15 @@ test('all verified Paintings are browsable and the pilot is exactly 500 new work
 });
 
 test('new game pairs use complete six-judge results and measured model predictions', () => {
-  assert.equal(data.version, 'follow-your-eye-met-paintings-v2');
-  assert.equal(data.pairs.length, 2757);
+  assert.equal(data.version, 'follow-your-eye-met-paintings-v3');
+  assert.equal(data.pairs.length, 2751);
   assert.equal(Object.keys(data.artworks).length, 5326);
   const rated = data.pairs.filter(pair => pair.ratingSource === 'original-study');
   const newPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-v1');
   const additionalPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-all-v1');
   assert.equal(rated.length, 478);
-  assert.equal(newPairs.length, 249);
-  assert.equal(additionalPairs.length, 2030);
+  assert.equal(newPairs.length, 247);
+  assert.equal(additionalPairs.length, 2026);
   assert.ok(rated.every(pair => Number.isFinite(pair.qA) && Number.isFinite(pair.modelQA)));
   assert.ok(newPairs.every(pair => Object.hasOwn(judged.pairs,pair.id)));
   assert.ok(newPairs.every(pair => pair.qA === judged.pairs[pair.id].qA
@@ -45,7 +45,7 @@ test('new game pairs use complete six-judge results and measured model predictio
     && pair.modelSource === 'study-numerical-reproduction-v1'
     && Object.keys(judged.pairs[pair.id].normalVotes).length === 6));
   const newIds = newPairs.flatMap(pair => [pair.a, pair.b]);
-  assert.equal(new Set(newIds).size, 498, 'each retained pilot work appears in one active pair');
+  assert.equal(new Set(newIds).size, 494, 'each retained pilot work appears in one active pair');
   assert.ok(newIds.every(id => data.artworks[id].featureSource === 'met-image-features-v1'
     && Object.values(data.artworks[id].features).length === 4
     && Object.values(data.artworks[id].features).every(value => Number.isFinite(value) && value >= 0 && value <= 1)
@@ -58,15 +58,15 @@ test('new game pairs use complete six-judge results and measured model predictio
   assert.equal(visualScreen.screenedCount, 4543);
   assert.equal(Object.keys(visualScreen.displayImageSha256).length, 4543);
   assert.equal(Object.keys(visualScreen.excluded).length, 265);
-  assert.equal(qualityReview.activePairCount,2757);
-  assert.equal(Object.keys(qualityReview.excluded).length,95);
-  assert.equal(qualityReview.removedPairIds.length,103);
+  assert.equal(qualityReview.activePairCount,2751);
+  assert.equal(Object.keys(qualityReview.excluded).length,103);
+  assert.equal(qualityReview.removedPairIds.length,109);
   const screenedOut = new Set([...Object.keys(visualScreen.excluded),...Object.keys(qualityReview.excluded)]);
   assert.ok(data.pairs.every(pair => !screenedOut.has(pair.a) && !screenedOut.has(pair.b)));
   assert.ok(qualityReview.removedPairIds.every(id => !data.pairs.some(pair => pair.id === id)));
   const expectedAdditional = fullCatalog.pairs.filter(pair => !screenedOut.has(pair.a) && !screenedOut.has(pair.b));
   assert.deepEqual(new Set(additionalPairs.map(pair => pair.id)), new Set(expectedAdditional.map(pair => pair.id)));
-  assert.equal(data.visualScreen.removedPairs, 297);
+  assert.equal(data.visualScreen.removedPairs, 303);
   assert.equal(fullJudged.planFingerprint, fullPredictions.planFingerprint);
   assert.equal(fullJudged.planFingerprint, fullCatalog.planFingerprint);
   assert.equal(Object.keys(fullJudged.calibrationVotes).length, 568);
@@ -74,7 +74,7 @@ test('new game pairs use complete six-judge results and measured model predictio
     && pair.modelQA === fullPredictions.pairs[pair.id].modelQA
     && Object.keys(fullJudged.pairs[pair.id].normalVotes).length === 6));
   const additionalIds = additionalPairs.flatMap(pair => [pair.a, pair.b]);
-  assert.equal(new Set(additionalIds).size, 4059);
+  assert.equal(new Set(additionalIds).size, 4051);
   assert.ok(additionalIds.every(id => data.artworks[id].feature28Source === fullFeatures.method
     && Object.keys(data.artworks[id].features28).length === 28
     && data.artworks[id].featureSource === displayFeatures.method
@@ -87,13 +87,13 @@ test('new game pairs use complete six-judge results and measured model predictio
 
 test('visually reviewed opening pairs lead a round while available', () => {
   assert.equal(openingReview.reviewedCandidatePairs,150);
-  assert.equal(openingReview.selectedPairCount,61);
+  assert.equal(openingReview.selectedPairCount,52);
   assert.deepEqual(data.openingPairs,openingReview.selected.map(pair => pair.id));
   const curated=new Set(data.openingPairs), active=new Set(data.pairs.map(pair => pair.id));
   assert.ok([...curated].every(id => active.has(id)));
   const byId=new Map(data.pairs.map(pair => [pair.id,pair]));
   const seen=[];
-  for(let i=0;i<18;i++){
+  for(let i=0;i<13;i++){
     const round=buildRound(data.pairs,seen,10,Math.random,data.openingPairs);
     assert.equal(round.deck.length,10);
     assert.ok(round.deck.slice(0,3).every(item => curated.has(item.pairId)));
