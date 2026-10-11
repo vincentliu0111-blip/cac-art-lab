@@ -8,7 +8,7 @@ CAC Art Lab is a public painting-preference experience at https://vincentliu.ai/
 - The original `cac-60-2026-09-11-v1` dataset and its records remain separate in the collector. Its historic 60-pair app data and 106 web thumbnails remain in this repository; they are not silently mixed with v7 results.
 - `web/met_experience_data.json`, `web/met_catalog.json` and `web/met-art/` supply the public experience. The 5,326 resized JPEGs are derived from Met Open Access images; the full originals and model checkpoints are not part of the website.
 
-The web site is static and published from `web/` by GitHub Pages. The Cloudflare Worker in `worker/` validates and stores individual events in D1; no owner token or D1 credential belongs in the public web files. The new v7 data uses a separate `experience_choices` table. The 60-pair `choices` table remains untouched.
+The web site is static and published from `web/` by GitHub Pages. The Cloudflare Worker in `worker/` validates and stores individual events in D1; no owner token or D1 credential belongs in the public web files. The v7 data uses a separate `experience_choices` table. The 60-pair `choices` table remains untouched. New v7 events also store a coarse country code supplied by Cloudflare, or unknown when unavailable; earlier events remain unknown. The pair dataset version stays v7 because this update does not change the artworks or pairs.
 
 ## Local checks
 
@@ -23,7 +23,7 @@ Serve `web/` over HTTP for a browser preview. Choice buttons pause when online s
 
 ## Publishing
 
-Apply `worker/migrate_experience_v7.sql` to the existing D1 database before deploying the updated Worker. Verify the Worker reports `cac-met-paintings-v7`, that a registered test session saves and exports one v7 event, and that old 60-pair events still work. Then publish `web/` through the existing Pages workflow. See [worker setup](worker/README.md) for routes and test cleanup. A deployment of the static files alone leaves saving unavailable, so the website must not be switched to v7 first.
+On an existing v7 deployment, back up D1 and apply `worker/migrate_experience_country.sql`. Publish the updated `web/` notice before deploying the country-aware Worker, so visitors see the notice before country collection starts. Verify a registered test session saves a v7 event with a country code or unknown, that the private country summary and CSV match D1, and that old 60-pair events still work. See [worker setup](worker/README.md) for routes and test cleanup. A deployment of the static files alone does not start country collection.
 
 The public website does not call an AI model when a visitor chooses. Its AI judgments were computed in advance.
 

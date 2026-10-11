@@ -99,7 +99,8 @@ async function saveEvent(request, env) {
 
 async function admin(request, env, path, url) {
     if (!await authorized(request, env)) return json({ ok: false, error: 'Unauthorized' }, 401);
-    if ((path === '/admin/experience-summary' || path === '/admin/experience.csv') && request.method === 'GET')
+    if (['/admin/experience-summary','/admin/experience-countries','/admin/experience.csv'].includes(path)
+        && request.method === 'GET')
         return adminExperience(env, url);
     if (path === '/admin/summary' && request.method === 'GET') {
         const rows = (await env.DB.prepare(`SELECT environment,dataset_version,

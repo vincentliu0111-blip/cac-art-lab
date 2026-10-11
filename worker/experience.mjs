@@ -6,7 +6,7 @@ const FIELDS = ['id', 'sessionId', 'roundId', 'datasetVersion', 'pairId', 'leftI
   'choice', 'position', 'layout', 'source', 'shownAt', 'chosenAt', 'elapsedMs', 'profile', 'consent'];
 const CSV_FIELDS = ['id', 'session_id', 'round_id', 'dataset_version', 'pair_id', 'position',
   'left_artwork_id', 'right_artwork_id', 'choice', 'layout', 'source', 'mood', 'interests_json',
-  'language', 'shown_at', 'chosen_at', 'elapsed_ms', 'received_at', 'environment'];
+  'language', 'shown_at', 'chosen_at', 'elapsed_ms', 'received_at', 'environment', 'country_code'];
 const MOODS = ['', 'calm', 'curious', 'energized', 'reflective'];
 const INTERESTS = ['landscape', 'people', 'nature', 'abstract', 'stories', 'details'];
 const LANGUAGES = ['', 'en', 'zh', 'es', 'fr', 'other'];
@@ -35,6 +35,12 @@ function validProfile(profile) {
     Array.isArray(profile.interests) && profile.interests.length <= INTERESTS.length &&
     new Set(profile.interests).size === profile.interests.length &&
     profile.interests.every(value => INTERESTS.includes(value));
+}
+
+function countryCode(request) {
+  const code = request.cf?.country;
+  return typeof code === 'string' && /^[A-Z]{2}$/.test(code) && code !== 'XX'
+    ? code : null;
 }
 
 export function validateExperienceEvent(value, now = Date.now()) {
@@ -76,16 +82,17 @@ async function save(request, env) {
   if (problem) return json({ok:false,error:problem}, 400);
   const environment = await env.DB.prepare('SELECT session_id FROM test_sessions WHERE session_id = ?')
     .bind(value.sessionId).first() ? 'test' : 'production';
+  const country = countryCode(request);
   const payload = JSON.stringify(value);
   const result = await env.DB.prepare(`INSERT OR IGNORE INTO experience_choices
     (id,session_id,round_id,dataset_version,pair_id,position,left_artwork_id,right_artwork_id,
      choice,layout,source,mood,interests_json,language,shown_at,chosen_at,elapsed_ms,
-     received_at,environment,payload_json)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+     received_at,environment,payload_json,country_code)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
       value.id, value.sessionId, value.roundId, value.datasetVersion, value.pairId, value.position,
       value.leftId, value.rightId, value.choice, value.layout, value.source, value.profile.mood,
       JSON.stringify(value.profile.interests), value.profile.language, value.shownAt, value.chosenAt,
-      value.elapsedMs, new Date().toISOString(), environment, payload).run();
+      value.elapsedMs, new Date().toISOString(), environment, payload, country).run();
   if (result.meta?.changes === 1) return json({ok:true,duplicate:false,id:value.id}, 201);
   const previous = await env.DB.prepare(`SELECT id,payload_json FROM experience_choices
     WHERE id = ? OR (session_id = ? AND round_id = ? AND (pair_id = ? OR position = ?)) LIMIT 1`)
@@ -149,6 +156,18 @@ export async function adminExperience(env, url) {
       COUNT(DISTINCT session_id) AS sessions FROM experience_choices
       GROUP BY environment,dataset_version ORDER BY environment,dataset_version`).all()).results;
     return json({ok:true,groups:rows});
+  }
+  if (url.pathname === '/admin/experience-countries') {
+    const environment = url.searchParams.get('environment') ?? 'production';
+    if (!['production','test'].includes(environment) ||
+        [...url.searchParams.keys()].some(key => key !== 'environment'))
+      return json({ok:false,error:'Invalid environment'}, 400);
+    const rows = (await env.DB.prepare(`SELECT country_code,COUNT(*) AS choices,
+      COUNT(DISTINCT session_id) AS sessions FROM experience_choices
+      WHERE environment = ? AND dataset_version = ?
+      GROUP BY country_code ORDER BY choices DESC,country_code`)
+      .bind(environment, manifest.version).all()).results;
+    return json({ok:true,datasetVersion:manifest.version,environment,groups:rows});
   }
   if (url.pathname === '/admin/experience.csv') {
     const environment = url.searchParams.get('environment') ?? 'production';

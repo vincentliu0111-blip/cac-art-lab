@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS experience_choices (
   received_at TEXT NOT NULL,
   environment TEXT NOT NULL CHECK (environment IN ('production','test')),
   payload_json TEXT NOT NULL,
+  country_code TEXT CHECK (country_code IS NULL OR country_code GLOB '[A-Z][A-Z]'),
   UNIQUE (session_id,round_id,pair_id),
   UNIQUE (session_id,round_id,position)
 );
@@ -56,3 +57,5 @@ CREATE INDEX IF NOT EXISTS experience_community
   ON experience_choices (environment,dataset_version,pair_id,choice);
 CREATE INDEX IF NOT EXISTS experience_export
   ON experience_choices (environment,dataset_version,received_at,id);
+CREATE INDEX IF NOT EXISTS experience_country
+  ON experience_choices (environment,dataset_version,country_code,session_id);

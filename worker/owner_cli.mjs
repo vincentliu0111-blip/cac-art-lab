@@ -11,6 +11,8 @@ if (!config.endpoint?.startsWith('https://')) throw new Error('No deployed colle
 
 let path, method = 'GET', body;
 if (command === 'summary') path = '/admin/experience-summary';
+else if (command === 'countries') path = '/admin/experience-countries';
+else if (command === 'countries-test') path = '/admin/experience-countries?environment=test';
 else if (command === 'summary-legacy') path = '/admin/summary';
 else if (['export-production', 'export-test', 'export-legacy-production', 'export-legacy-test'].includes(command)) {
     if (!argument) throw new Error('Provide an output CSV path');
@@ -22,7 +24,7 @@ else if (['export-production', 'export-test', 'export-legacy-production', 'expor
     path = '/admin/test-sessions'; method = 'POST'; body = JSON.stringify({ sessionId: argument });
 } else if (command === 'delete-test' && sessionPattern.test(argument || '')) {
     path = `/admin/test-sessions/${argument}`; method = 'DELETE';
-} else throw new Error('Usage: owner_cli.mjs summary | summary-legacy | export-production FILE | export-test FILE | export-legacy-production FILE | export-legacy-test FILE | register-test UUID | delete-test UUID');
+} else throw new Error('Usage: owner_cli.mjs summary | countries | countries-test | summary-legacy | export-production FILE | export-test FILE | export-legacy-production FILE | export-legacy-test FILE | register-test UUID | delete-test UUID');
 
 const response = await fetch(config.endpoint + path, {
     method,
