@@ -1,6 +1,6 @@
 {
-  "method": "cac-research-numerical-reproduction-v1",
-  "source": "The Met primaryImageSmall; original CAC research code and round3 training values",
+  "method": "study-numerical-reproduction-v1",
+  "source": "The Met primaryImageSmall; original study code and round3 training values",
   "researchZipSha256": "928e8198be5f96c1d25334e1dd1a7ee433be37a7ea7ea3bb5ecf8a2a00707121",
   "model": "openai/clip-vit-large-patch14",
   "modelRevision": "32bd64288804d66eefd0ccbe215aa642df71cc41",
@@ -11,7 +11,7 @@
   "torch": "2.14.1",
   "transformers": "4.57.6",
   "validation": {
-    "method": "cac-research-numerical-reproduction-v1",
+    "method": "study-numerical-reproduction-v1",
     "oldArtworkCount": 300,
     "oldPairCount": 594,
     "handmadeMaxAbsDifference": 0.00022370594713660985,

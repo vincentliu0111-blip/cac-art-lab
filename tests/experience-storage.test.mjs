@@ -126,7 +126,7 @@ test('single-tab fallback without Web Locks still preserves choices on quota fai
 
 test('a new dataset keeps the old browser snapshot under its original key', () => {
   const latest = JSON.parse(readFileSync(new URL('../web/met_experience_data.json', import.meta.url), 'utf8'));
-  const baseKey = 'cac-art-lab-experience-v3';
+  const baseKey = 'follow-your-eye-experience-v1';
   const versionKey = `${baseKey}:${latest.version}`;
   const old = {datasetVersion: 'cac-met-paintings-v2', history: [{choice: 'A'}]};
   const disk = new Map([[baseKey, JSON.stringify(old)]]);

@@ -26,10 +26,10 @@ test('all verified Paintings are browsable and the pilot is exactly 500 new work
 });
 
 test('new game pairs use complete six-judge results and measured model predictions', () => {
-  assert.equal(data.version, 'cac-met-paintings-v7');
+  assert.equal(data.version, 'follow-your-eye-met-paintings-v1');
   assert.equal(data.pairs.length, 2860);
   assert.equal(Object.keys(data.artworks).length, 5326);
-  const rated = data.pairs.filter(pair => pair.ratingSource === 'original-cac');
+  const rated = data.pairs.filter(pair => pair.ratingSource === 'original-study');
   const newPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-v1');
   const additionalPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-all-v1');
   assert.equal(rated.length, 532);
@@ -40,14 +40,14 @@ test('new game pairs use complete six-judge results and measured model predictio
   assert.ok(newPairs.every(pair => pair.qA === judged.pairs[pair.id].qA
     && Number.isFinite(pair.qA) && pair.qA >= 0 && pair.qA <= 1
     && pair.modelQA === predictions.pairs[pair.id].modelQA
-    && pair.modelSource === 'cac-research-numerical-reproduction-v1'
+    && pair.modelSource === 'study-numerical-reproduction-v1'
     && Object.keys(judged.pairs[pair.id].normalVotes).length === 6));
   const newIds = newPairs.flatMap(pair => [pair.a, pair.b]);
   assert.equal(new Set(newIds).size, 500, 'each new work appears in one pilot pair');
   assert.ok(newIds.every(id => data.artworks[id].featureSource === 'met-image-features-v1'
     && Object.values(data.artworks[id].features).length === 4
     && Object.values(data.artworks[id].features).every(value => Number.isFinite(value) && value >= 0 && value <= 1)
-    && data.artworks[id].feature28Source === 'cac-research-numerical-reproduction-v1'
+    && data.artworks[id].feature28Source === 'study-numerical-reproduction-v1'
     && Object.keys(data.artworks[id].features28).length === 28
     && Object.keys(historical.features[id]).length === 28));
   assert.deepEqual(new Set(newIds), new Set(catalog.artworks.filter(art => art.pilot).map(art => art.id)));

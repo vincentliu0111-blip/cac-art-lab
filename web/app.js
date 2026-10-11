@@ -2,9 +2,9 @@ import {buildRound, agreement, getInsight, chosenArtwork, isValidState, MOODS, I
 
 const $ = id => document.getElementById(id);
 // A new schema never backfills untimed choices from earlier prototypes.
-const STORAGE_BASE_KEY = 'cac-art-lab-experience-v3';
+const STORAGE_BASE_KEY = 'follow-your-eye-experience-v1';
 let storageKey = STORAGE_BASE_KEY;
-const LOCALE_KEY = 'cac-art-lab-language';
+const LOCALE_KEY = 'follow-your-eye-language';
 let locale = 'en';
 try { locale = localStorage.getItem(LOCALE_KEY) === 'zh' ? 'zh' : 'en'; } catch {}
 const COPY = {
@@ -26,7 +26,7 @@ let storageMessage = '', memoryOnly = false, communityRequest = 0;
 
 function translate() {
   document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
-  document.title = locale === 'zh' ? 'CAC Art Lab — 相信你的眼光' : 'CAC Art Lab — Follow your eye';
+  document.title = locale === 'zh' ? 'Follow Your Eye — 相信你的眼光' : 'Follow Your Eye — Choose the art you love';
   document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
   $('languageToggle').textContent = locale === 'en' ? '中文' : 'EN';
   $('languageToggle').setAttribute('aria-label', locale === 'en' ? 'Switch interface to Chinese' : 'Switch interface to English');

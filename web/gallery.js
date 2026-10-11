@@ -1,6 +1,6 @@
 const $ = id => document.getElementById(id);
 const PAGE_SIZE = 60;
-const LOCALE_KEY = 'cac-art-lab-language';
+const LOCALE_KEY = 'follow-your-eye-language';
 let locale = 'en';
 try { locale = localStorage.getItem(LOCALE_KEY) === 'zh' ? 'zh' : 'en'; } catch {}
 let artworks = [], filtered = [], shown = 0, period = 'all';
@@ -31,7 +31,7 @@ const t = key => words[locale][key];
 
 function translate() {
   document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
-  document.title = locale === 'zh' ? '大都会画廊 — CAC Art Lab' : 'Met Paintings — CAC Art Lab';
+  document.title = locale === 'zh' ? '大都会画廊 — Follow Your Eye' : 'Met Paintings — Follow Your Eye';
   for (const [id,key] of Object.entries({playLink:'play',galleryLink:'gallery',aboutLink:'about',privateLabel:'private',eyebrow:'eyebrow',heroTitle:'title',heroIntro:'intro',playButton:'playButton',galleryContext:'context',searchLabel:'searchLabel',pilotLabel:'pilot',loadMore:'more',errorTitle:'errorTitle',errorText:'errorText',footerText:'footer',sourcePolicy:'policy',dialogEyebrow:'dialogEyebrow',dialogSource:'source',dialogNote:'note'})) $(id).textContent=t(key);
   $('searchArt').placeholder=t('searchPlaceholder');
   $('languageToggle').textContent=locale==='en'?'中文':'EN';

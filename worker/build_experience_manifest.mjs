@@ -5,7 +5,7 @@ const source = new URL('../web/met_experience_data.json', import.meta.url);
 const target = new URL('./experience_manifest.json', import.meta.url);
 const bytes = readFileSync(source);
 const data = JSON.parse(bytes);
-if (!/^cac-met-paintings-v\d+$/.test(data.version) || !Array.isArray(data.pairs)) {
+if (!/^follow-your-eye-met-paintings-v\d+$/.test(data.version) || !Array.isArray(data.pairs)) {
   throw new Error('Unexpected experience dataset');
 }
 const pairs = data.pairs.map(({ id, a, b }) => ({ id, a, b }));

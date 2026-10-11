@@ -1,4 +1,4 @@
-name: Deploy CAC Art Lab
+name: Deploy Follow Your Eye
 
 on:
   push:

@@ -2,7 +2,7 @@ import { readFile, stat, writeFile } from 'node:fs/promises';
 
 const [command, argument] = process.argv.slice(2);
 const sessionPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const tokenPath = process.env.CAC_ADMIN_TOKEN_FILE || '/private/tmp/cac-art-admin-token';
+const tokenPath = process.env.FYE_ADMIN_TOKEN_FILE || '/private/tmp/follow-your-eye-admin-token';
 if ((await stat(tokenPath)).mode & 0o077) throw new Error('Owner token file must be readable only by its owner (mode 600)');
 const token = (await readFile(tokenPath, 'utf8')).trim();
 if (token.length < 32) throw new Error('Owner token is missing or too short');

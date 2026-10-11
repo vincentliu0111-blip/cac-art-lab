@@ -1,6 +1,6 @@
 {
-  "version": "cac-experience-v1",
-  "source": "The Metropolitan Museum of Art Open Access; original CAC research data. The 594 existing pairs are grouped within three broad date bands (198 pairs per band). Culture, religion, subject, and mood matching have not been established.",
+  "version": "follow-your-eye-archive-v1",
+  "source": "The Metropolitan Museum of Art Open Access; original study data. The 594 existing pairs are grouped within three broad date bands (198 pairs per band). Culture, religion, subject, and mood matching have not been established.",
   "artworks": {
     "36023": {
       "id": "36023",

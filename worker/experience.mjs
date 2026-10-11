@@ -177,7 +177,7 @@ export async function adminExperience(env, url) {
       .bind(environment, manifest.version).all()).results;
     const csv = [CSV_FIELDS.join(','), ...rows.map(row => CSV_FIELDS.map(key => csvCell(row[key])).join(','))].join('\r\n') + '\r\n';
     return new Response(csv, {headers:{'content-type':'text/csv; charset=utf-8',
-      'content-disposition':`attachment; filename="cac-experience-${environment}.csv"`,
+      'content-disposition':`attachment; filename="follow-your-eye-experience-${environment}.csv"`,
       'cache-control':'no-store','x-content-type-options':'nosniff'}});
   }
   return json({ok:false,error:'Not found'}, 404);

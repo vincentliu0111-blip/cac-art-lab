@@ -1,4 +1,5 @@
 import manifest from './manifest.json' with { type: 'json' };
+import experienceManifest from './experience_manifest.json' with { type: 'json' };
 import { handleExperience, adminExperience } from './experience.mjs';
 
 const PAIRS = new Map(manifest.pairs.map(pair => [pair.id, pair]));
@@ -119,7 +120,7 @@ async function admin(request, env, path, url) {
         const rows = (await env.DB.prepare(query).bind(...(version ? [environment, version] : [environment])).all()).results;
         const content = [CSV_FIELDS.join(','), ...rows.map(row => CSV_FIELDS.map(key => csvCell(row[key])).join(','))].join('\r\n') + '\r\n';
         return new Response(content, { headers: { 'content-type': 'text/csv; charset=utf-8',
-            'content-disposition': `attachment; filename="cac-choices-${environment}.csv"`,
+            'content-disposition': `attachment; filename="follow-your-eye-choices-${environment}.csv"`,
             'cache-control': 'no-store', 'x-content-type-options': 'nosniff' } });
     }
     if (path === '/admin/test-sessions' && request.method === 'POST') {
@@ -157,7 +158,7 @@ export default {
         const url = new URL(request.url);
         const path = url.pathname;
         if (path === '/health' && request.method === 'GET')
-            return json({ ok: true, datasetVersion: manifest.version });
+            return json({ ok: true, datasetVersion: experienceManifest.version });
         if (path.startsWith('/admin/')) return admin(request, env, path, url);
         if (path.startsWith('/experience/')) return handleExperience(request, env, url);
         const origin = request.headers.get('origin');
