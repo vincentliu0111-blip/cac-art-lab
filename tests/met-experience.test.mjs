@@ -87,13 +87,13 @@ test('new game pairs use complete six-judge results and measured model predictio
 
 test('visually reviewed opening pairs lead a round while available', () => {
   assert.equal(openingReview.reviewedCandidatePairs,150);
-  assert.equal(openingReview.selectedPairCount,52);
+  assert.equal(openingReview.selectedPairCount,51);
   assert.deepEqual(data.openingPairs,openingReview.selected.map(pair => pair.id));
   const curated=new Set(data.openingPairs), active=new Set(data.pairs.map(pair => pair.id));
   assert.ok([...curated].every(id => active.has(id)));
   const byId=new Map(data.pairs.map(pair => [pair.id,pair]));
   const seen=[];
-  for(let i=0;i<13;i++){
+  for(let i=0;i<12;i++){
     const round=buildRound(data.pairs,seen,10,Math.random,data.openingPairs);
     assert.equal(round.deck.length,10);
     assert.ok(round.deck.slice(0,3).every(item => curated.has(item.pairId)));

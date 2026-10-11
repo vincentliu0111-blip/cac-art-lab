@@ -2,8 +2,8 @@
   "method": "manual-opening-pair-review-v1",
   "date": "2026-10-11",
   "reviewedCandidatePairs": 150,
-  "selectedPairCount": 52,
-  "description": "Three selected pairs, when still unused in the current deck cycle, lead each 10-choice round. Candidate pairs were drawn from the three date ranges with both display JPEG short sides at least 400 pixels and moderate aspect ratios. The selected pairs were manually checked as two-image cards. A live screenshot check removed photographed mounts and three faint works from the opening pool. Other pairs remain in the deck but do not displace unused selected pairs from the first three positions.",
+  "selectedPairCount": 51,
+  "description": "Three selected pairs, when still unused in the current deck cycle, lead each 10-choice round. Candidate pairs were drawn from the three date ranges with both display JPEG short sides at least 400 pixels and moderate aspect ratios. The selected pairs were manually checked as two-image cards. Live screenshot checks removed photographed mounts, three faint works, and one less appealing print image from the opening pool. Other pairs remain in the deck but do not displace unused selected pairs from the first three positions.",
   "selected": [
     {
       "id": "met-74986-74999",
@@ -142,12 +142,6 @@
       "period": "1600-1799",
       "a": "436064",
       "b": "437876"
-    },
-    {
-      "id": "met-437789-437564",
-      "period": "1600-1799",
-      "a": "437789",
-      "b": "437564"
     },
     {
       "id": "met-38023-37947",
