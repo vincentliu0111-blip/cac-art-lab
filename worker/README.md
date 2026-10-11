@@ -1,6 +1,6 @@
 # Follow Your Eye online collector
 
-The website saves each choice before showing the next pair. The current dataset has 2,751 active pairs after a second image quality review removed 109 from the preceding 2,860-pair deck. Artwork records, existing AI judgments, and model predictions are preserved. Its new version string keeps incoming records separate from earlier choices in the existing D1 `experience_choices` table. The Worker also retains the historic 60-pair `/choices` endpoint and its separate `choices` table.
+The website saves each choice before showing the next pair. The current dataset has 2,751 active pairs after a second image quality review removed 109 from the preceding 2,860-pair deck. Artwork records, existing AI judgments, and model predictions are preserved. Its version string keeps incoming records separate from earlier choices in the existing D1 `experience_choices` table. The former 60-pair public write route is retired; its separate `choices` table and existing records remain available through authenticated owner exports.
 
 New choices store an approximate two-letter country code supplied by Cloudflare's `request.cf.country`, or unknown when unavailable. The browser cannot provide or override it. The site explains this before participation. The app database stores neither raw IP addresses nor precise locations; Cloudflare may process IP addresses in network and service logs. Country may be inaccurate due to VPNs and proxies. The owner can view country with each choice, while public vote totals exclude it.
 

@@ -18,7 +18,7 @@ else if (['export-production', 'export-test', 'export-legacy-production', 'expor
     if (!argument) throw new Error('Provide an output CSV path');
     const environment = command.endsWith('test') ? 'test' : 'production';
     path = command.startsWith('export-legacy-')
-        ? `/admin/choices.csv?environment=${environment}&version=cac-60-2026-09-11-v1`
+        ? `/admin/choices.csv?environment=${environment}`
         : `/admin/experience.csv?environment=${environment}`;
 } else if (command === 'register-test' && sessionPattern.test(argument || '')) {
     path = '/admin/test-sessions'; method = 'POST'; body = JSON.stringify({ sessionId: argument });

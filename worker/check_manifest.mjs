@@ -1,27 +1,19 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import manifest from './manifest.json' with { type: 'json' };
-import experienceManifest from './experience_manifest.json' with { type: 'json' };
+import manifest from './experience_manifest.json' with { type: 'json' };
 
-const raw = fs.readFileSync(new URL('../web/app_data.json', import.meta.url));
-const pairs = JSON.parse(raw);
-const artworks = JSON.parse(fs.readFileSync(new URL('../web/artworks.json', import.meta.url)));
+const raw = fs.readFileSync(new URL('../web/met_experience_data.json', import.meta.url));
+const data = JSON.parse(raw);
 const config = JSON.parse(fs.readFileSync(new URL('../web/collection_config.json', import.meta.url)));
 const digest = crypto.createHash('sha256').update(raw).digest('hex');
-if (digest !== manifest.appDataSha256
-    || ![manifest.version, experienceManifest.version].includes(config.datasetVersion)
-    || pairs.length !== manifest.pairs.length) throw new Error('Dataset version or fingerprint changed');
-for (let i = 0; i < pairs.length; i += 1) {
-    const pair = pairs[i], expected = manifest.pairs[i];
-    if (pair.pair_id !== expected.id || i + 1 !== expected.position
-        || pair.img_A !== expected.a + '.jpg' || pair.img_B !== expected.b + '.jpg')
+if (digest !== manifest.sourceSha256 || data.version !== manifest.version
+    || config.datasetVersion !== manifest.version || data.pairs.length !== manifest.pairs.length)
+    throw new Error('Dataset version or fingerprint changed');
+for (let i = 0; i < manifest.pairs.length; i += 1) {
+    const pair = data.pairs[i], expected = manifest.pairs[i];
+    if (pair.id !== expected.id || pair.a !== expected.a || pair.b !== expected.b)
         throw new Error(`Pair ${i + 1} differs from the collector manifest`);
-    for (const side of ['A', 'B']) {
-        const info = artworks[pair['img_' + side]];
-        if (!info || info.id !== Number(pair['img_' + side].replace('.jpg', ''))
-            || info.url !== `https://www.metmuseum.org/art/collection/search/${info.id}`
-            || typeof info.visualAlt !== 'string' || info.visualAlt.length < 30)
-            throw new Error(`Artwork details missing for pair ${i + 1} side ${side}`);
-    }
+    if (!data.artworks[pair.a] || !data.artworks[pair.b] || pair.a === pair.b)
+        throw new Error(`Artwork details missing for pair ${i + 1}`);
 }
-console.log(`PASS ${manifest.version}: ${pairs.length} frozen pairs and ${Object.keys(artworks).length} artwork records`);
+console.log(`PASS ${manifest.version}: ${manifest.pairs.length} current pairs`);
