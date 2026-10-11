@@ -15,6 +15,8 @@ const fullCatalog = load('met_all_pair_catalog.json');
 const fullFeatures = load('met_all_28_features.json');
 const displayFeatures = load('met_all_display_features.json');
 const visualScreen = JSON.parse(readFileSync(new URL('../Data/met_visual_screen_v1.json', import.meta.url), 'utf8'));
+const qualityReview = JSON.parse(readFileSync(new URL('../Data/met_quality_review_v2.json', import.meta.url), 'utf8'));
+const openingReview = JSON.parse(readFileSync(new URL('../Data/met_opening_pairs_v1.json', import.meta.url), 'utf8'));
 
 test('all verified Paintings are browsable and the pilot is exactly 500 new works', () => {
   assert.equal(catalog.total, 5326);
@@ -26,40 +28,45 @@ test('all verified Paintings are browsable and the pilot is exactly 500 new work
 });
 
 test('new game pairs use complete six-judge results and measured model predictions', () => {
-  assert.equal(data.version, 'follow-your-eye-met-paintings-v1');
-  assert.equal(data.pairs.length, 2860);
+  assert.equal(data.version, 'follow-your-eye-met-paintings-v2');
+  assert.equal(data.pairs.length, 2757);
   assert.equal(Object.keys(data.artworks).length, 5326);
   const rated = data.pairs.filter(pair => pair.ratingSource === 'original-study');
   const newPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-v1');
   const additionalPairs = data.pairs.filter(pair => pair.ratingSource === 'six-judge-met-all-v1');
-  assert.equal(rated.length, 532);
-  assert.equal(newPairs.length, 250);
-  assert.equal(additionalPairs.length, 2078);
+  assert.equal(rated.length, 478);
+  assert.equal(newPairs.length, 249);
+  assert.equal(additionalPairs.length, 2030);
   assert.ok(rated.every(pair => Number.isFinite(pair.qA) && Number.isFinite(pair.modelQA)));
-  assert.deepEqual(new Set(newPairs.map(pair => pair.id)), new Set(Object.keys(judged.pairs)));
+  assert.ok(newPairs.every(pair => Object.hasOwn(judged.pairs,pair.id)));
   assert.ok(newPairs.every(pair => pair.qA === judged.pairs[pair.id].qA
     && Number.isFinite(pair.qA) && pair.qA >= 0 && pair.qA <= 1
     && pair.modelQA === predictions.pairs[pair.id].modelQA
     && pair.modelSource === 'study-numerical-reproduction-v1'
     && Object.keys(judged.pairs[pair.id].normalVotes).length === 6));
   const newIds = newPairs.flatMap(pair => [pair.a, pair.b]);
-  assert.equal(new Set(newIds).size, 500, 'each new work appears in one pilot pair');
+  assert.equal(new Set(newIds).size, 498, 'each retained pilot work appears in one active pair');
   assert.ok(newIds.every(id => data.artworks[id].featureSource === 'met-image-features-v1'
     && Object.values(data.artworks[id].features).length === 4
     && Object.values(data.artworks[id].features).every(value => Number.isFinite(value) && value >= 0 && value <= 1)
     && data.artworks[id].feature28Source === 'study-numerical-reproduction-v1'
     && Object.keys(data.artworks[id].features28).length === 28
     && Object.keys(historical.features[id]).length === 28));
-  assert.deepEqual(new Set(newIds), new Set(catalog.artworks.filter(art => art.pilot).map(art => art.id)));
+  assert.ok(newIds.every(id => catalog.artworks.some(art => art.pilot && art.id === id)));
   assert.ok(data.pairs.every(pair => data.artworks[pair.a].period === pair.period && data.artworks[pair.b].period === pair.period));
   assert.equal(visualScreen.method, 'met-contact-sheet-visual-screen-v1');
   assert.equal(visualScreen.screenedCount, 4543);
   assert.equal(Object.keys(visualScreen.displayImageSha256).length, 4543);
   assert.equal(Object.keys(visualScreen.excluded).length, 265);
-  const screenedOut = new Set(Object.keys(visualScreen.excluded));
+  assert.equal(qualityReview.activePairCount,2757);
+  assert.equal(Object.keys(qualityReview.excluded).length,95);
+  assert.equal(qualityReview.removedPairIds.length,103);
+  const screenedOut = new Set([...Object.keys(visualScreen.excluded),...Object.keys(qualityReview.excluded)]);
+  assert.ok(data.pairs.every(pair => !screenedOut.has(pair.a) && !screenedOut.has(pair.b)));
+  assert.ok(qualityReview.removedPairIds.every(id => !data.pairs.some(pair => pair.id === id)));
   const expectedAdditional = fullCatalog.pairs.filter(pair => !screenedOut.has(pair.a) && !screenedOut.has(pair.b));
   assert.deepEqual(new Set(additionalPairs.map(pair => pair.id)), new Set(expectedAdditional.map(pair => pair.id)));
-  assert.equal(data.visualScreen.removedPairs, 194);
+  assert.equal(data.visualScreen.removedPairs, 297);
   assert.equal(fullJudged.planFingerprint, fullPredictions.planFingerprint);
   assert.equal(fullJudged.planFingerprint, fullCatalog.planFingerprint);
   assert.equal(Object.keys(fullJudged.calibrationVotes).length, 568);
@@ -67,7 +74,7 @@ test('new game pairs use complete six-judge results and measured model predictio
     && pair.modelQA === fullPredictions.pairs[pair.id].modelQA
     && Object.keys(fullJudged.pairs[pair.id].normalVotes).length === 6));
   const additionalIds = additionalPairs.flatMap(pair => [pair.a, pair.b]);
-  assert.equal(new Set(additionalIds).size, 4155);
+  assert.equal(new Set(additionalIds).size, 4059);
   assert.ok(additionalIds.every(id => data.artworks[id].feature28Source === fullFeatures.method
     && Object.keys(data.artworks[id].features28).length === 28
     && data.artworks[id].featureSource === displayFeatures.method
@@ -76,6 +83,24 @@ test('new game pairs use complete six-judge results and measured model predictio
   assert.equal(Object.keys(displayFeatures.features).length, 5043);
   assert.ok([...new Set([...newIds, ...additionalIds])].every(id =>
     JSON.stringify(data.artworks[id].features) === JSON.stringify(displayFeatures.features[id])));
+});
+
+test('visually reviewed opening pairs lead a round while available', () => {
+  assert.equal(openingReview.reviewedCandidatePairs,150);
+  assert.equal(openingReview.selectedPairCount,61);
+  assert.deepEqual(data.openingPairs,openingReview.selected.map(pair => pair.id));
+  const curated=new Set(data.openingPairs), active=new Set(data.pairs.map(pair => pair.id));
+  assert.ok([...curated].every(id => active.has(id)));
+  const byId=new Map(data.pairs.map(pair => [pair.id,pair]));
+  const seen=[];
+  for(let i=0;i<18;i++){
+    const round=buildRound(data.pairs,seen,10,Math.random,data.openingPairs);
+    assert.equal(round.deck.length,10);
+    assert.ok(round.deck.slice(0,3).every(item => curated.has(item.pairId)));
+    assert.equal(new Set(round.deck.slice(0,3).map(item => byId.get(item.pairId).period)).size,3);
+    assert.ok(round.deck.every(item => !seen.includes(item.pairId)));
+    seen.push(...round.deck.map(item => item.pairId));
+  }
 });
 
 test('new pairs can be played with judge agreement, model agreement and measured features', () => {

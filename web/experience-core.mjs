@@ -11,27 +11,37 @@ export function shuffle(items, random = Math.random) {
   }
   return result;
 }
-export function buildRound(pairs, seen = [], size = ROUND_SIZE, random = Math.random) {
-  const used = new Set(seen);
-  let available = pairs.filter(pair => !used.has(pair.id));
-  const newCycle = available.length === 0;
-  if (newCycle) available = pairs;
+function sampleAcrossPeriods(pairs, size, random) {
   const groups = new Map();
-  for (const pair of available) {
+  for (const pair of pairs) {
     if (!groups.has(pair.period)) groups.set(pair.period, []);
     groups.get(pair.period).push(pair);
   }
   const periods = shuffle([...groups.keys()], random);
   for (const period of periods) groups.set(period, shuffle(groups.get(period), random));
   const selected = [];
-  while (selected.length < Math.min(size, available.length)) {
+  while (selected.length < Math.min(size, pairs.length)) {
     for (const period of periods) {
       const pair = groups.get(period).pop();
       if (pair) selected.push(pair);
-      if (selected.length === Math.min(size, available.length)) break;
+      if (selected.length === Math.min(size, pairs.length)) break;
     }
   }
-  const ordered = shuffle(selected, random);
+  return selected;
+}
+export function buildRound(pairs, seen = [], size = ROUND_SIZE, random = Math.random, openingPairIds = []) {
+  const used = new Set(seen);
+  let available = pairs.filter(pair => !used.has(pair.id));
+  const newCycle = available.length === 0;
+  if (newCycle) available = pairs;
+  const openingSet = new Set(openingPairIds);
+  const opening = openingSet.size ? sampleAcrossPeriods(available.filter(pair => openingSet.has(pair.id)), Math.min(3,size), random) : [];
+  const openingIds = new Set(opening.map(pair => pair.id));
+  const nonOpening = available.filter(pair => !openingSet.has(pair.id));
+  const restPool = nonOpening.length >= Math.min(size,available.length)-opening.length
+    ? nonOpening : available.filter(pair => !openingIds.has(pair.id));
+  const rest = sampleAcrossPeriods(restPool, Math.min(size,available.length)-opening.length, random);
+  const ordered = [...opening, ...shuffle(rest, random)];
   const flips = shuffle(ordered.map((_, i) => i % 2 === 0), random);
   return {
     newCycle,

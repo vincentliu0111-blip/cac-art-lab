@@ -9,7 +9,7 @@ const words = {
   en: {
     play:'The experiment', gallery:'Met gallery', about:'The idea', private:'Public experience', eyebrow:'THE MET · OPEN ACCESS',
     title:'A world of paintings.', intro:'Explore 5,326 verified public-domain Paintings, created between 1300 and 1914. Follow a detail that catches your eye.',
-    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. The visually screened choice deck has 2,860 pairs; the 2,328 new pairs have six AI-judge votes and feature-model predictions.',
+    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. The visually screened choice deck has 2,757 pairs; the 2,279 new pairs have six AI-judge votes and feature-model predictions.',
     searchLabel:'Search artworks, artists, or Met IDs', searchPlaceholder:'A title, artist, or number', all:'All periods', pilot:'First 500 new works', pilotBadge:'First 500-work set',
     results:n=>`${n.toLocaleString('en-US')} painting${n===1?'':'s'}`, more:'See more paintings', none:'No paintings match these filters.',
     errorTitle:'The gallery could not open.', errorText:'Please check your connection and refresh this page.',
@@ -19,7 +19,7 @@ const words = {
   zh: {
     play:'开始探索', gallery:'大都会画廊', about:'关于实验', private:'公开体验', eyebrow:'大都会博物馆 · 开放资源',
     title:'走进五千多幅画。', intro:'浏览 5,326 幅已核验的公有领域 Paintings，创作起始年代为 1300 至 1914 年。看看哪一处细节吸引你。',
-    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。经过画面适用性筛选的题库有 2,860 组；其中 2,328 组新画对均有六位 AI 评委投票和特征模型预测。',
+    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。经过画面适用性筛选的题库有 2,757 组；其中 2,279 组新画对均有六位 AI 评委投票和特征模型预测。',
     searchLabel:'搜索作品、画家或馆方编号', searchPlaceholder:'输入作品名、画家或编号', all:'全部年代', pilot:'首批 500 幅新画', pilotBadge:'首批 500 幅',
     results:n=>`${n.toLocaleString('zh-CN')} 幅画作`, more:'查看更多画作', none:'没有符合条件的画作。',
     errorTitle:'画廊暂时无法打开。', errorText:'请检查网络连接并刷新页面。',

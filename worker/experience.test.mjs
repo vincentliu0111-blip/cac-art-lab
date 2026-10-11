@@ -46,8 +46,8 @@ async function call(env, path, method='GET', body=null, token=null, options={}) 
   return worker.fetch(request,env);
 }
 
-test('frozen v7 pairs and required online event fields', () => {
-  assert.equal(manifest.pairs.length,2860);
+test('screened pairs and required online event fields', () => {
+  assert.equal(manifest.pairs.length,2757);
   const good=event();
   assert.equal(validateExperienceEvent(good),null);
   assert.equal(validateExperienceEvent({...good,choice:'skip'}),null);
