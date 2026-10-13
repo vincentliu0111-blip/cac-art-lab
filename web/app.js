@@ -25,6 +25,8 @@ Object.assign(COPY.en, {
   featureEyebrow:'YOUR FIRST PICK',
   compareJudge:'You × AI judges', compareModel:'You × feature model',
   compareAria:'Your choices compared with AI', compareCount:(n,d)=>`${n} of ${d} same choices`, compareNone:'No comparable choices yet',
+  seeDetails:'See details',playAgain:'Play another round — can you match the AI more closely?',shareResult:'Share result ↗',
+  linkCopied:'Link copied',shareFailed:'Could not copy. Please try again.',shareFallback:'I explored art with Follow Your Eye.',
 });
 Object.assign(COPY.zh, {
   zoom:'放大查看', zoomLeft:'放大查看左侧作品', zoomRight:'放大查看右侧作品',
@@ -34,13 +36,15 @@ Object.assign(COPY.zh, {
   featureEyebrow:'这一轮的第一幅选择',
   compareJudge:'你的选择 × AI 裁判', compareModel:'你的选择 × 特征模型',
   compareAria:'你的选择与 AI 的比较', compareCount:(n,d)=>`${d} 组中有 ${n} 组一致`, compareNone:'暂无可比较的选择',
+  seeDetails:'查看明细',playAgain:'再来一轮，看你能不能和 AI 更合拍',shareResult:'分享结果 ↗',
+  linkCopied:'分享文字和链接已复制',shareFailed:'复制失败，请重试。',shareFallback:'我在 Follow Your Eye 探索了艺术作品。',
 });
 const t = (key, ...args) => typeof COPY[locale][key] === 'function' ? COPY[locale][key](...args) : COPY[locale][key] ?? COPY.en[key] ?? key;
 let data, pairsById, playablePairs, preferredOpening, westernPairIds, state;
 let view = 'play', busy = false, displayKey = '', renderToken = 0;
 let collector = false, syncing = false, hasSynced = false, rejected = false, syncController;
 let collectorEndpoint = '';
-let storageMessage = '', memoryOnly = false, communityRequest = 0;
+let storageMessage = '', memoryOnly = false, communityRequest = 0, selectedComparison = null;
 let zoomScale = 1, zoomX = 0, zoomY = 0, dragPoint = null;
 
 function translate() {
@@ -251,6 +255,8 @@ function renderSummary(focus=true) {
   setViews('play');
   const records=currentRecords(), picks=records.filter(r=>r.choice!=='skip');
   const judges=agreement(records,pairsById,'qA'), model=agreement(records,pairsById,'modelQA');
+  $('shareStatus').hidden=true;
+  $('shareStatus').textContent='';
   $('summaryIntro').textContent=t('summaryIntro',picks.length,records.length-picks.length);
   $('heroJudgeScore').textContent=judges.percent===null?'—':`${judges.percent}%`;
   $('heroModelScore').textContent=model.percent===null?'—':`${model.percent}%`;
@@ -318,6 +324,32 @@ function judgeDescription(record,field) {
   const q=pairsById.get(record.pairId)[field];if(q===null)return locale==='zh'?'尚未评测':'Awaiting review';if(q===.5)return t('tie');
   const preferred=q>.5?'A':'B';return `${t(preferred===record.choice?'samePick':'differentPick')} · ${Math.round(Math.max(q,1-q)*100)}% ${t(field==='qA'?'support':'prediction')}`;
 }
+function showComparison(field) {
+  const details=$('comparisonDetails');
+  selectedComparison=field;
+  details.open=true;
+  details.querySelectorAll('[data-compare]').forEach(el=>el.classList.toggle('is-highlighted',el.dataset.compare===field));
+  details.querySelector('summary').focus({preventScroll:true});
+  details.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+async function shareResult() {
+  const summary=$('shareSummary').hidden?t('shareFallback'):$('shareSummary').textContent;
+  const url='https://vincentliu.ai/?source=share';
+  if(navigator.share){
+    try{await navigator.share({text:summary,url});return;}
+    catch(error){if(error?.name==='AbortError')return;}
+  }
+  const content=`${summary}\n${url}`;
+  let copied=false;
+  try{if(navigator.clipboard){await navigator.clipboard.writeText(content);copied=true;}}catch{}
+  if(!copied){
+    const field=document.createElement('textarea');field.value=content;field.style.position='fixed';field.style.opacity='0';document.body.append(field);field.select();
+    try{copied=document.execCommand('copy');}catch{}
+    field.remove();$('shareResult').focus({preventScroll:true});
+  }
+  $('shareStatus').textContent=t(copied?'linkCopied':'shareFailed');
+  $('shareStatus').hidden=false;
+}
 async function renderComparisons(records) {
   const request=++communityRequest;
   $('comparisonList').replaceChildren(...records.map((record,index)=>{
@@ -326,7 +358,7 @@ async function renderComparisons(records) {
     const name=document.createElement('div'),title=document.createElement('strong'),counts=document.createElement('span');counts.dataset.pair=record.pairId;
     const id=chosenArtwork(record,pairsById);title.textContent=id?`${t('yourPick')}: ${data.artworks[id].title}`:t('skipped');counts.textContent=collector?'':t('communityUnavailable');name.append(title,counts);
     const stats=document.createElement('div');stats.className='comparison-stats';
-    if(id)for(const [label,field]of[['judges','qA'],['model','modelQA']]){const span=document.createElement('span');span.textContent=`${t(label)}: ${judgeDescription(record,field)}`;stats.append(span);}
+    if(id)for(const [label,field]of[['judges','qA'],['model','modelQA']]){const span=document.createElement('span');span.dataset.compare=field;span.classList.toggle('is-highlighted',selectedComparison===field);span.textContent=`${t(label)}: ${judgeDescription(record,field)}`;stats.append(span);}
     row.append(number,name,stats);return row;
   }));
   if(!collector)return;
@@ -343,7 +375,7 @@ async function nextRound() {
     const next=buildRoundWithPreference(playablePairs,current.seen,{openingPairIds:preferredOpening,preferredPairIds:westernPairIds});if(next.newCycle)current.seen=[];
     current.deck=next.deck;current.index=0;current.roundId=uuid();current.roundNumber++;current.presentation=null;
   });
-  displayKey='';renderPlay();window.scrollTo({top:0,behavior:'instant'});$('main').focus({preventScroll:true});
+  selectedComparison=null;displayKey='';renderPlay();window.scrollTo({top:0,behavior:'instant'});$('main').focus({preventScroll:true});
 }
 function renderSettings() {
   const icons={calm:'◌',curious:'✧',energized:'☀',reflective:'☾'};
@@ -412,6 +444,10 @@ zoomArea.addEventListener('pointerup',()=>{dragPoint=null;});
 zoomArea.addEventListener('pointercancel',()=>{dragPoint=null;});
 $('skipPair').addEventListener('click',()=>choose('skip'));
 $('nextRound').addEventListener('click',nextRound);
+$('nextRoundBottom').addEventListener('click',nextRound);
+$('judgeDetails').addEventListener('click',()=>showComparison('qA'));
+$('modelDetails').addEventListener('click',()=>showComparison('modelQA'));
+$('shareResult').addEventListener('click',shareResult);
 $('playNav').addEventListener('click',()=>{if(state){renderPlay();window.scrollTo({top:0,behavior:'instant'});}});
 $('collectionNav').addEventListener('click',()=>{if(state){renderCollection();window.scrollTo({top:0,behavior:'instant'});$('collectionView').focus({preventScroll:true});}});
 $('backToPlay').addEventListener('click',()=>{renderPlay();window.scrollTo({top:0,behavior:'instant'});});

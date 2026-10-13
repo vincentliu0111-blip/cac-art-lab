@@ -219,3 +219,23 @@
   #roundGallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   #roundGallery .gallery-card .thumb{height:145px}
 }
+
+/* Result actions keep the detailed comparison and next round close to the scores. */
+.comparison-tile{width:100%;color:inherit;text-align:left;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.comparison-tile:hover,.comparison-tile:focus-visible{background:#ffffff28;border-color:#d8ebb4;transform:translateY(-2px)}
+.comparison-tile .tile-link{display:flex;align-items:center;gap:5px;margin-top:6px;color:#e4f2c7;font-size:11px;font-weight:700}
+.comparison-tile:hover .tile-link{text-decoration:underline}
+.summary-actions{display:flex;flex-wrap:wrap;gap:9px;width:100%;margin-top:17px}
+.summary-actions button{min-height:47px;border-radius:8px;padding:10px 15px;font-size:12px;font-weight:700;line-height:1.45;text-align:center}
+.summary-next{flex:1 1 220px;background:#ddedb5;color:#203127}
+.summary-next:hover{background:#eff9cf}
+.summary-share{flex:0 1 auto;border:1px solid #c5d7b4;background:transparent;color:#f6f7ed}
+.summary-share:hover{background:#ffffff23}
+.share-status{margin:9px 0 0;color:#e4f2c7;font-size:11px}
+.comparison-details{scroll-margin-top:20px}
+.comparison-stats span.is-highlighted{padding:3px 8px;border-radius:6px;background:#e4edcf;color:#263b32;font-weight:700}
+@media(max-width:560px){
+  .summary-actions{gap:8px}
+  .summary-actions button{width:100%;flex:1 1 100%}
+  .comparison-tile .tile-link{font-size:10px}
+}
