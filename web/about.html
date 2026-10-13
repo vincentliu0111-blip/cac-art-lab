@@ -13,6 +13,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>The idea — Follow Your Eye</title>
   <link rel="stylesheet" href="style.css?v=20261012-v4">
+  <link rel="stylesheet" href="about.css?v=20261013-v1">
 </head>
 <body>
   <div class="app-shell">
@@ -34,7 +35,29 @@
       <h2>Artwork credits</h2>
       <p>Images and artwork information come from <a href="https://www.metmuseum.org/about-the-met/policies-and-documents/open-access" target="_blank" rel="noopener noreferrer">The Met Open Access</a>. An online collection record does not mean an artwork is currently on view.</p>
       <p><a class="primary-button" href="./">Follow your eye</a> <a class="primary-button" href="gallery.html">Explore the gallery</a></p>
-      <details><summary>中文说明</summary><p>每轮最多选择十组画作，也可以跳过；完成后查看你与预先计算的 AI 偏好有何异同。画廊包含 5,326 幅大都会博物馆开放资源画作；已评测题库包含 2,751 组，体验从中选用材质类别相同、明暗色彩和画面特征较接近的 1,200 组。这个筛选只能改善画面可比性，并不等于艺术史上的风格判断。前几组优先从同时通过筛选的人工复看画对中抽取。每次选择或跳过，以及 Cloudflare 根据网络连接推断的粗略国家或地区，都会保存到在线数据库，成功后才进入下一题。不愿保存时，请不要参与选画。心情、兴趣和语言设置可跳过；填写后会随选择记录保存。国家或地区可能未知，也可能因 VPN 等原因不准确；旧回答无法补出地区。站主可查看每条记录的地区，公开票数不会显示地区。应用数据库不保存姓名、邮箱、原始 IP 地址或精确位置，但 Cloudflare 的网络与服务日志可能处理 IP 地址。选画时不会实时调用 AI。票数不等于独立人数，也不代表大众审美。</p></details>
+      <details class="about-zh" lang="zh-CN">
+        <summary><span>中文版 · 关于这个项目</span><span class="about-zh-hint"><span class="about-zh-closed">展开阅读</span><span class="about-zh-open">收起说明</span> <span class="about-zh-arrow" aria-hidden="true">↗</span></span></summary>
+        <div class="about-zh-body">
+          <p class="about-zh-kicker">FOLLOW YOUR EYE · 中文导览</p>
+          <h2>每个人看画的方式，都有点不一样。</h2>
+          <p class="about-zh-lead">两幅画摆在面前，你会更喜欢哪一幅？凭直觉选就好，没有标准答案。每轮最多选 10 组，也可以跳过。结束后，你可以看看自己的选择与预先算好的 AI 偏好有哪些相同、哪些不同。</p>
+          <div class="about-zh-notice"><strong>开始前，先说清楚</strong><p>每次选择或跳过，连同 Cloudflare 根据网络连接推断的粗略国家或地区，都会保存到在线数据库；保存成功后才会出现下一组。如果不希望这些信息被保存，请不要参与选画。心情、兴趣和语言设置都可以不填；填写后会随选择记录保存，也不会决定你看到哪些画。</p></div>
+          <section aria-labelledby="zh-collection"><h3 id="zh-collection">画作从哪里来？</h3>
+            <p>画廊收录了大都会艺术博物馆 5,326 幅已核验、属于公有领域的绘画作品。已评测题库有 2,751 组画对，其中 478 组来自原题库，2,273 组是后来增加的。两轮图像检查剔除了 303 组不适合并排观看的画对，但相关作品仍留在画廊中。</p>
+            <p>选画体验从中使用 1,200 组：它们的大类媒材相同，画面的明暗、色彩、细节和对称程度也比较接近。这样能减少明显的视觉落差，却不能据此断定两幅画属于同一种艺术史风格。</p>
+            <p>每轮通常有 7 组来自大都会以西方艺术为重点的策展部门，另外 3 组来自其余通过筛选的画对。开头 3 组会优先从 14 组人工复看过的画对中抽取。画廊只是让这类作品较早出现，所有 5,326 幅画仍可浏览和搜索。这里的“西方”是依据馆方部门资料作出的展示分组，并不能概括一件作品的全部文化背景。</p>
+          </section>
+          <section aria-labelledby="zh-ai"><h3 id="zh-ai">AI 在这里做什么？</h3>
+            <p>原题库沿用已有的 AI 评审和图像特征模型结果；新增画对也取得相同六套 AI 评审配置的结果。图像特征预测按原方法重新计算：旧结果核对到小数点后四位一致，但模型文件的指纹并不相同。你选画时不会实时调用 AI。</p>
+            <p>结果里的“一致”只表示你和 AI 在这些画对上作出了相同选择，不代表判断正确，也不是美的客观分数。页面提到的亮度、饱和度、细节或对称性是图像测量值，不能解释你为什么喜欢一幅画。参与者也并非随机抽样；票数不等于独立人数，更不代表大众审美。</p>
+          </section>
+          <section aria-labelledby="zh-data"><h3 id="zh-data">你的选择如何保存？</h3>
+            <p>每条记录包含随机生成的浏览器和轮次编号、画对与数据版本、左右位置、选择或跳过、题目序号、时间与耗时、简短来源标记，以及你自愿填写的心情、兴趣和语言。服务器还会记录接收时间。浏览进度也保存在当前设备；重新开始不会删除已经传到线上的记录。</p>
+            <p>国家或地区可能无法判断，也可能因 VPN 等原因不准确；旧记录无法补出地区。站主能看到每条记录的地区，公开票数不会显示。应用数据库不保存姓名、邮箱、原始 IP 地址或精确位置，但 Cloudflare 的网络与服务日志可能处理 IP 地址。</p>
+          </section>
+          <section aria-labelledby="zh-credit"><h3 id="zh-credit">作品来源</h3><p>图片和作品资料来自<a href="https://www.metmuseum.org/about-the-met/policies-and-documents/open-access" target="_blank" rel="noopener noreferrer">大都会艺术博物馆开放资源</a>。作品能在线浏览，不代表它目前正在馆内展出。</p></section>
+        </div>
+      </details>
     </main>
     <footer class="site-footer"><span>✳ Follow Your Eye</span><a href="gallery.html">Met gallery</a></footer>
   </div>
