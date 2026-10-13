@@ -48,6 +48,30 @@ export function buildRound(pairs, seen = [], size = ROUND_SIZE, random = Math.ra
     deck: ordered.map((pair, i) => ({pairId: pair.id, leftId: flips[i] ? pair.b : pair.a, rightId: flips[i] ? pair.a : pair.b}))
   };
 }
+export function buildRoundWithPreference(pairs, seen = [], {
+  size = ROUND_SIZE, random = Math.random, openingPairIds = [], preferredPairIds = [], preferredCount = 7
+} = {}) {
+  const used = new Set(seen);
+  let available = pairs.filter(pair => !used.has(pair.id));
+  const newCycle = available.length === 0;
+  if (newCycle) available = pairs;
+  const preferredIds = new Set(preferredPairIds);
+  const openingIds = new Set(openingPairIds);
+  const preferred = available.filter(pair => preferredIds.has(pair.id));
+  const others = available.filter(pair => !preferredIds.has(pair.id));
+  const target = Math.min(size, Math.max(0, preferredCount));
+  const opening = sampleAcrossPeriods(preferred.filter(pair => openingIds.has(pair.id)), Math.min(3, target), random);
+  const openingChosen = new Set(opening.map(pair => pair.id));
+  const preferredRest = sampleAcrossPeriods(preferred.filter(pair => !openingChosen.has(pair.id)), target - opening.length, random);
+  const selected = [...opening, ...preferredRest];
+  const othersSelected = sampleAcrossPeriods(others, size - selected.length, random);
+  selected.push(...othersSelected);
+  if (selected.length < Math.min(size, available.length)) {
+    const selectedIds = new Set(selected.map(pair => pair.id));
+    selected.push(...sampleAcrossPeriods(available.filter(pair => !selectedIds.has(pair.id)), size - selected.length, random));
+  }
+  return {...buildRound(selected, [], size, random, openingPairIds), newCycle};
+}
 export function agreement(records, pairsById, field = 'qA') {
   let matched = 0, total = 0;
   for (const record of records) {

@@ -1,16 +1,18 @@
+import {orderForBrowse} from './gallery-order.mjs?v=20261013-v2';
+
 const $ = id => document.getElementById(id);
 const PAGE_SIZE = 60;
 const LOCALE_KEY = 'follow-your-eye-language';
 let locale = 'en';
 try { locale = localStorage.getItem(LOCALE_KEY) === 'zh' ? 'zh' : 'en'; } catch {}
-let artworks = [], filtered = [], shown = 0, period = 'all';
+let artworks = [], filtered = [], shown = 0, period = 'all', westernArtworkIds = new Set();
 let zoomScale = 1, zoomX = 0, zoomY = 0, dragPoint = null;
 
 const words = {
   en: {
     play:'The experiment', gallery:'Met gallery', about:'The idea', private:'Public experience', eyebrow:'THE MET · OPEN ACCESS',
     title:'A world of paintings.', intro:'Explore 5,326 verified public-domain Paintings, created between 1300 and 1914. Follow a detail that catches your eye.',
-    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. The experience draws from 1,200 more comparable pairs selected from 2,751 evaluated pairs.',
+    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. Western collection works appear more often near the start; every work remains available.',
     searchLabel:'Search artworks, artists, or Met IDs', searchPlaceholder:'A title, artist, or number', all:'All periods', pilot:'First 500 new works', pilotBadge:'First 500-work set',
     results:n=>`${n.toLocaleString('en-US')} painting${n===1?'':'s'}`, more:'See more paintings', none:'No paintings match these filters.',
     errorTitle:'The gallery could not open.', errorText:'Please check your connection and refresh this page.',
@@ -21,7 +23,7 @@ const words = {
   zh: {
     play:'开始探索', gallery:'大都会画廊', about:'关于实验', private:'公开体验', eyebrow:'大都会博物馆 · 开放资源',
     title:'走进五千多幅画。', intro:'浏览 5,326 幅已核验的公有领域 Paintings，创作起始年代为 1300 至 1914 年。看看哪一处细节吸引你。',
-    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。体验从 2,751 组已评测画对中，选用 1,200 组画面较可比的配对。',
+    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。前面会更多展示西方馆藏作品，其他作品仍可浏览。',
     searchLabel:'搜索作品、画家或馆方编号', searchPlaceholder:'输入作品名、画家或编号', all:'全部年代', pilot:'首批 500 幅新画', pilotBadge:'首批 500 幅',
     results:n=>`${n.toLocaleString('zh-CN')} 幅画作`, more:'查看更多画作', none:'没有符合条件的画作。',
     errorTitle:'画廊暂时无法打开。', errorText:'请检查网络连接并刷新页面。',
@@ -41,7 +43,7 @@ function translate() {
   $('searchArt').placeholder=t('searchPlaceholder');
   $('languageToggle').textContent=locale==='en'?'中文':'EN';
   $('languageToggle').setAttribute('aria-label',locale==='en'?'Switch interface to Chinese':'切换为英文');
-  renderFilters(); renderResults(true);
+  renderFilters(); applyFilters();
 }
 
 function renderFilters() {
@@ -54,7 +56,8 @@ function renderFilters() {
 
 function applyFilters() {
   const query=$('searchArt').value.trim().toLocaleLowerCase(); const pilot=$('pilotOnly').checked;
-  filtered=artworks.filter(art=>(period==='all'||art.period===period)&&(!pilot||art.pilot)&&(!query||[art.title,art.artist,art.id,art.medium].some(value=>value.toLocaleLowerCase().includes(query))));
+  const matches=artworks.filter(art=>(period==='all'||art.period===period)&&(!pilot||art.pilot)&&(!query||[art.title,art.artist,art.id,art.medium].some(value=>value.toLocaleLowerCase().includes(query))));
+  filtered=query?matches:orderForBrowse(matches,westernArtworkIds);
   shown=0; renderResults(true);
 }
 
@@ -101,8 +104,13 @@ $('languageToggle').addEventListener('click',()=>{locale=locale==='en'?'zh':'en'
 $('searchArt').addEventListener('input',applyFilters);
 $('pilotOnly').addEventListener('change',applyFilters);
 $('loadMore').addEventListener('click',()=>renderResults());
-fetch('./met_catalog.json',{cache:'no-cache'}).then(response=>{if(!response.ok)throw Error('Catalog unavailable');return response.json();}).then(data=>{
+Promise.all([fetch('./met_catalog.json',{cache:'no-cache'}),fetch('./met_western_artworks.json',{cache:'no-cache'})]).then(async([catalogResponse,originResponse])=>{
+  if(!catalogResponse.ok||!originResponse.ok)throw Error('Catalog unavailable');
+  return [await catalogResponse.json(),await originResponse.json()];
+}).then(([data,origins])=>{
   if(data.total!==5326||!Array.isArray(data.artworks)||data.artworks.length!==data.total)throw Error('Invalid catalog');
-  artworks=data.artworks;applyFilters();translate();
+  const catalogIds=new Set(data.artworks.map(art=>String(art.id)));
+  if(origins.catalogVersion!==data.version||!Array.isArray(origins.westernArtworkIds)||new Set(origins.westernArtworkIds).size!==origins.westernArtworkIds.length||origins.westernArtworkIds.some(id=>!catalogIds.has(id)))throw Error('Invalid artwork groups');
+  artworks=data.artworks;westernArtworkIds=new Set(origins.westernArtworkIds);translate();
 }).catch(()=>{$('galleryError').hidden=false;$('galleryGrid').hidden=true;translate();});
 translate();

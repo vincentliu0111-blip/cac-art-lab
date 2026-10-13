@@ -2,6 +2,8 @@
 
 这一包是项目早期使用的**数据**，不含网页代码。当前公开体验使用的完整题库与筛图记录见 `web/met_experience_data.json`、`met_visual_screen_v1.json` 和 `met_quality_review_v2.json`；早期数据包的规模与当前网站不同。更多项目说明见仓库根目录的 README。
 
+当前网站的西方作品展示分组见 `met_department_snapshot_v1.json` 和 `web/met_western_artworks.json`。前者从大都会博物馆官方 [Open Access CSV](https://github.com/metmuseum/openaccess/blob/master/MetObjects.csv)（SHA-256 记录在文件中）及缺失条目的官方 Collection API 提取馆藏部门；仍无法取得部门信息的 130 幅画保留为未分类。`build_western_artwork_ids.py` 根据馆藏部门生成网页名单。这个分组只用于调整选画和画廊的展示比例，不代表对作品文化身份的完整判定。
+
 全部画作来自**大都会艺术博物馆开放获取接口**，均为**公有领域**（`isPublicDomain` 为真），可以公开展示。
 
 ---

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {agreement, buildRound, getInsight} from '../web/experience-core.mjs';
+import {agreement, buildRound, buildRoundWithPreference, getInsight} from '../web/experience-core.mjs';
+import {orderForBrowse} from '../web/gallery-order.mjs';
 
 const load = name => JSON.parse(readFileSync(new URL(`../web/${name}`, import.meta.url), 'utf8'));
 const catalog = load('met_catalog.json');
@@ -18,6 +19,8 @@ const visualScreen = JSON.parse(readFileSync(new URL('../Data/met_visual_screen_
 const qualityReview = JSON.parse(readFileSync(new URL('../Data/met_quality_review_v2.json', import.meta.url), 'utf8'));
 const openingReview = JSON.parse(readFileSync(new URL('../Data/met_opening_pairs_v1.json', import.meta.url), 'utf8'));
 const styleMatches = load('met_style_matched_pairs.json');
+const westernArtworks = load('met_western_artworks.json');
+const departmentSnapshot = JSON.parse(readFileSync(new URL('../Data/met_department_snapshot_v1.json', import.meta.url), 'utf8'));
 
 test('all verified Paintings are browsable and the pilot is exactly 500 new works', () => {
   assert.equal(catalog.total, 5326);
@@ -126,6 +129,44 @@ test('new rounds use existing, more visually comparable evaluated pairs', () => 
   const round=buildRound(selected,[],10,Math.random,opening);
   assert.equal(round.deck.length,10);
   assert.ok(round.deck.every(item=>ids.has(item.pairId)));
+});
+
+test('official Met department groups keep Western works prominent without hiding the collection', () => {
+  const western = new Set(westernArtworks.westernArtworkIds);
+  const catalogIds = new Set(catalog.artworks.map(art => String(art.id)));
+  const departments = new Set(['European Paintings', 'Robert Lehman Collection', 'European Sculpture and Decorative Arts', 'The American Wing']);
+  assert.equal(westernArtworks.catalogVersion, catalog.version);
+  assert.equal(westernArtworks.experienceVersion, data.version);
+  assert.equal(western.size, westernArtworks.westernArtworkIds.length);
+  assert.equal(western.size, 2185);
+  assert.deepEqual(western, new Set([...catalogIds].filter(id => departments.has(departmentSnapshot.departmentById[id]))));
+  const ordered = orderForBrowse(catalog.artworks, western);
+  assert.equal(ordered.length, catalog.total);
+  assert.equal(new Set(ordered.map(art => art.id)).size, catalog.total);
+  assert.equal(ordered.slice(0, 60).filter(art => western.has(String(art.id))).length, 42);
+});
+
+test('new choice rounds prefer seven Western-Western pairs and keep the other screened pairs', () => {
+  const western = new Set(westernArtworks.westernArtworkIds);
+  const screened = new Set(styleMatches.pairIds);
+  const pairs = data.pairs.filter(pair => screened.has(pair.id));
+  const preferred = pairs.filter(pair => western.has(pair.a) && western.has(pair.b)).map(pair => pair.id);
+  const preferredSet = new Set(preferred);
+  const opening = data.openingPairs.filter(id => preferredSet.has(id));
+  assert.equal(preferred.length, 448);
+  assert.equal(opening.length, 14);
+  let seen = [];
+  for (let i = 0; i < 12; i++) {
+    const round = buildRoundWithPreference(pairs, seen, {preferredPairIds: preferred, openingPairIds: opening});
+    assert.equal(round.deck.length, 10);
+    assert.equal(round.deck.filter(item => preferredSet.has(item.pairId)).length, 7);
+    assert.ok(round.deck.every(item => screened.has(item.pairId) && !seen.includes(item.pairId)));
+    seen = seen.concat(round.deck.map(item => item.pairId));
+  }
+  const remaining = pairs.filter(pair => !preferredSet.has(pair.id));
+  const fallback = buildRoundWithPreference(pairs, preferred, {preferredPairIds: preferred});
+  assert.equal(fallback.deck.length, 10);
+  assert.ok(fallback.deck.every(item => remaining.some(pair => pair.id === item.pairId)));
 });
 
 test('new pairs can be played with judge agreement, model agreement and measured features', () => {

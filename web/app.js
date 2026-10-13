@@ -1,4 +1,4 @@
-import {buildRound, agreement, getInsight, chosenArtwork, isValidState, MOODS, INTERESTS} from './experience-core.mjs';
+import {buildRoundWithPreference, agreement, getInsight, chosenArtwork, isValidState, MOODS, INTERESTS} from './experience-core.mjs?v=20261013-v2';
 
 const $ = id => document.getElementById(id);
 // A new schema never backfills untimed choices from earlier prototypes.
@@ -36,7 +36,7 @@ Object.assign(COPY.zh, {
   compareAria:'你的选择与 AI 的比较', compareCount:(n,d)=>`${d} 组中有 ${n} 组一致`, compareNone:'暂无可比较的选择',
 });
 const t = (key, ...args) => typeof COPY[locale][key] === 'function' ? COPY[locale][key](...args) : COPY[locale][key] ?? COPY.en[key] ?? key;
-let data, pairsById, playablePairs, preferredOpening, state;
+let data, pairsById, playablePairs, preferredOpening, westernPairIds, state;
 let view = 'play', busy = false, displayKey = '', renderToken = 0;
 let collector = false, syncing = false, hasSynced = false, rejected = false, syncController;
 let collectorEndpoint = '';
@@ -67,7 +67,7 @@ function uuid() { return crypto.randomUUID(); }
 function freshState() {
   const sourceParam = new URLSearchParams(location.search).get('source') || 'direct';
   const source = /^[a-z0-9][a-z0-9_-]{0,63}$/.test(sourceParam) ? sourceParam : 'direct';
-  return {schema:2,source,presentation:null,datasetVersion:data.version,sessionId:uuid(),roundId:uuid(),roundNumber:1,consent:true,profile:{mood:'',interests:[],language:''},deck:buildRound(playablePairs,[],10,Math.random,preferredOpening).deck,index:0,history:[],seen:[],queue:[]};
+  return {schema:2,source,presentation:null,datasetVersion:data.version,sessionId:uuid(),roundId:uuid(),roundNumber:1,consent:true,profile:{mood:'',interests:[],language:''},deck:buildRoundWithPreference(playablePairs,[],{openingPairIds:preferredOpening,preferredPairIds:westernPairIds}).deck,index:0,history:[],seen:[],queue:[]};
 }
 function save() {
   if (memoryOnly) { updateStorageWarning(); return; }
@@ -129,17 +129,22 @@ function validateData(value) {
 async function load() {
   $('loadError').hidden = true; $('loading').hidden = false;
   try {
-    const [response,selectionResponse] = await Promise.all([
+    const [response,selectionResponse,originResponse] = await Promise.all([
       fetch('./met_experience_data.json', {cache:'no-cache'}),
       fetch('./met_style_matched_pairs.json', {cache:'no-cache'}),
+      fetch('./met_western_artworks.json', {cache:'no-cache'}),
     ]);
-    if (!response.ok || !selectionResponse.ok) throw new Error('Dataset unavailable');
-    const loaded = await response.json(), selection = await selectionResponse.json(); validateData(loaded);
+    if (!response.ok || !selectionResponse.ok || !originResponse.ok) throw new Error('Dataset unavailable');
+    const loaded = await response.json(), selection = await selectionResponse.json(), origins = await originResponse.json(); validateData(loaded);
     const ids = new Set(selection.pairIds);
     if (selection.sourceVersion !== loaded.version || !Array.isArray(selection.pairIds) || ids.size !== selection.pairIds.length || ids.size < 10 || selection.pairIds.some(id => !loaded.pairs.some(pair => pair.id === id))) throw new Error('Invalid playable pairs');
+    if (origins.experienceVersion !== loaded.version || !Array.isArray(origins.westernArtworkIds) || new Set(origins.westernArtworkIds).size !== origins.westernArtworkIds.length || origins.westernArtworkIds.some(id => !loaded.artworks[id])) throw new Error('Invalid artwork groups');
     data = loaded;
     playablePairs = data.pairs.filter(pair => ids.has(pair.id));
-    preferredOpening = data.openingPairs.filter(id => ids.has(id));
+    const westernArtworkIds = new Set(origins.westernArtworkIds);
+    westernPairIds = playablePairs.filter(pair => westernArtworkIds.has(pair.a) && westernArtworkIds.has(pair.b)).map(pair => pair.id);
+    const westernPairs = new Set(westernPairIds);
+    preferredOpening = data.openingPairs.filter(id => westernPairs.has(id));
     storageKey = `${STORAGE_BASE_KEY}:${data.version}`;
     pairsById = new Map(data.pairs.map(pair => [pair.id,pair]));
     state = restore(); state.consent = true; $('contribute').checked = true;
@@ -335,7 +340,7 @@ async function nextRound() {
   if(!state||busy)return;
   await mutateState(current=>{
     if(current.index < current.deck.length) return false;
-    const next=buildRound(playablePairs,current.seen,10,Math.random,preferredOpening);if(next.newCycle)current.seen=[];
+    const next=buildRoundWithPreference(playablePairs,current.seen,{openingPairIds:preferredOpening,preferredPairIds:westernPairIds});if(next.newCycle)current.seen=[];
     current.deck=next.deck;current.index=0;current.roundId=uuid();current.roundNumber++;current.presentation=null;
   });
   displayKey='';renderPlay();window.scrollTo({top:0,behavior:'instant'});$('main').focus({preventScroll:true});
