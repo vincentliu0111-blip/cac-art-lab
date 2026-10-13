@@ -17,17 +17,37 @@ const COPY = {
     brightness_higher:'被光亮吸引。',brightness_lower:'偏爱深一些的色调。',saturation_higher:'色彩抓住了你的目光。',saturation_lower:'看见安静的色彩。',detail_higher:'在细节里停留。',detail_lower:'给画面留一点呼吸。',symmetry_higher:'寻找一点平衡。',symmetry_lower:'意料之外的平衡。',insight:(feature,n,total)=>`在 ${total} 组可比较画对中，你有 ${n} 次选择了${feature}的图像。`,dimension_brightness_higher:'更明亮',dimension_brightness_lower:'更暗',dimension_saturation_higher:'饱和度更高',dimension_saturation_lower:'饱和度更低',dimension_detail_higher:'边缘更密集',dimension_detail_lower:'边缘更疏朗',dimension_symmetry_higher:'左右更对称',dimension_symmetry_lower:'左右较不对称',
   }
 };
+Object.assign(COPY.en, {
+  zoom:'Zoom', zoomLeft:'Zoom in on the left artwork', zoomRight:'Zoom in on the right artwork',
+  zoomIn:'Zoom in', zoomOut:'Zoom out', zoomReset:'Reset', zoomHint:'Drag the image to explore details.',
+  viewDetails:'View details', viewMet:'Explore at The Met ↗',
+  openArtwork:'Open a work to zoom, or follow its Met collection link.',
+  featureEyebrow:'YOUR FIRST PICK',
+  compareJudge:'You × AI judges', compareModel:'You × feature model',
+  compareAria:'Your choices compared with AI', compareCount:(n,d)=>`${n} of ${d} same choices`, compareNone:'No comparable choices yet',
+});
+Object.assign(COPY.zh, {
+  zoom:'放大查看', zoomLeft:'放大查看左侧作品', zoomRight:'放大查看右侧作品',
+  zoomIn:'放大', zoomOut:'缩小', zoomReset:'重置', zoomHint:'拖动画面查看更多细节。',
+  viewDetails:'查看详情', viewMet:'前往大都会藏品页 ↗',
+  openArtwork:'点开作品可缩放，也可直接前往大都会藏品页。',
+  featureEyebrow:'这一轮的第一幅选择',
+  compareJudge:'你的选择 × AI 裁判', compareModel:'你的选择 × 特征模型',
+  compareAria:'你的选择与 AI 的比较', compareCount:(n,d)=>`${d} 组中有 ${n} 组一致`, compareNone:'暂无可比较的选择',
+});
 const t = (key, ...args) => typeof COPY[locale][key] === 'function' ? COPY[locale][key](...args) : COPY[locale][key] ?? COPY.en[key] ?? key;
-let data, pairsById, state;
+let data, pairsById, playablePairs, preferredOpening, state;
 let view = 'play', busy = false, displayKey = '', renderToken = 0;
 let collector = false, syncing = false, hasSynced = false, rejected = false, syncController;
 let collectorEndpoint = '';
 let storageMessage = '', memoryOnly = false, communityRequest = 0;
+let zoomScale = 1, zoomX = 0, zoomY = 0, dragPoint = null;
 
 function translate() {
   document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
   document.title = locale === 'zh' ? 'Follow Your Eye — 相信你的眼光' : 'Follow Your Eye — Choose the art you love';
   document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
   $('languageToggle').textContent = locale === 'en' ? '中文' : 'EN';
   $('languageToggle').setAttribute('aria-label', locale === 'en' ? 'Switch interface to Chinese' : 'Switch interface to English');
   $('settingsOpen').setAttribute('aria-label', t('settings'));
@@ -47,7 +67,7 @@ function uuid() { return crypto.randomUUID(); }
 function freshState() {
   const sourceParam = new URLSearchParams(location.search).get('source') || 'direct';
   const source = /^[a-z0-9][a-z0-9_-]{0,63}$/.test(sourceParam) ? sourceParam : 'direct';
-  return {schema:2,source,presentation:null,datasetVersion:data.version,sessionId:uuid(),roundId:uuid(),roundNumber:1,consent:true,profile:{mood:'',interests:[],language:''},deck:buildRound(data.pairs,[],10,Math.random,data.openingPairs).deck,index:0,history:[],seen:[],queue:[]};
+  return {schema:2,source,presentation:null,datasetVersion:data.version,sessionId:uuid(),roundId:uuid(),roundNumber:1,consent:true,profile:{mood:'',interests:[],language:''},deck:buildRound(playablePairs,[],10,Math.random,preferredOpening).deck,index:0,history:[],seen:[],queue:[]};
 }
 function save() {
   if (memoryOnly) { updateStorageWarning(); return; }
@@ -109,9 +129,17 @@ function validateData(value) {
 async function load() {
   $('loadError').hidden = true; $('loading').hidden = false;
   try {
-    const response = await fetch('./met_experience_data.json', {cache:'no-cache'});
-    if (!response.ok) throw new Error('Dataset unavailable');
-    const loaded = await response.json(); validateData(loaded); data = loaded;
+    const [response,selectionResponse] = await Promise.all([
+      fetch('./met_experience_data.json', {cache:'no-cache'}),
+      fetch('./met_style_matched_pairs.json', {cache:'no-cache'}),
+    ]);
+    if (!response.ok || !selectionResponse.ok) throw new Error('Dataset unavailable');
+    const loaded = await response.json(), selection = await selectionResponse.json(); validateData(loaded);
+    const ids = new Set(selection.pairIds);
+    if (selection.sourceVersion !== loaded.version || !Array.isArray(selection.pairIds) || ids.size !== selection.pairIds.length || ids.size < 10 || selection.pairIds.some(id => !loaded.pairs.some(pair => pair.id === id))) throw new Error('Invalid playable pairs');
+    data = loaded;
+    playablePairs = data.pairs.filter(pair => ids.has(pair.id));
+    preferredOpening = data.openingPairs.filter(id => ids.has(id));
     storageKey = `${STORAGE_BASE_KEY}:${data.version}`;
     pairsById = new Map(data.pairs.map(pair => [pair.id,pair]));
     state = restore(); state.consent = true; $('contribute').checked = true;
@@ -153,6 +181,7 @@ function renderPlay() {
     $('artStage').classList.add('entering');
     $('pairNotice').hidden=true;
     $('chooseLeft').disabled = true; $('chooseRight').disabled = true;
+    $('zoomLeft').disabled = $('zoomRight').disabled = true;
     $('skipPair').disabled = true;
     Promise.all([setImage($('leftImage'),data.artworks[item.leftId]),setImage($('rightImage'),data.artworks[item.rightId])]).then(async loaded => {
       if (token !== renderToken) return;
@@ -164,6 +193,7 @@ function renderPlay() {
       if (token !== renderToken || state.roundId !== expectedRound || state.index !== expectedIndex) {displayKey='';renderPlay();return;}
       const complete = loaded.every(Boolean);
       $('chooseLeft').disabled = $('chooseRight').disabled = !complete || !collector;
+      $('zoomLeft').disabled = !loaded[0]; $('zoomRight').disabled = !loaded[1];
       $('skipPair').disabled = !collector;
       if (!complete) {$('announcement').textContent=t('imageError');$('pairNotice').textContent=t('imageError');$('pairNotice').hidden=false;}
     });
@@ -217,6 +247,10 @@ function renderSummary(focus=true) {
   const records=currentRecords(), picks=records.filter(r=>r.choice!=='skip');
   const judges=agreement(records,pairsById,'qA'), model=agreement(records,pairsById,'modelQA');
   $('summaryIntro').textContent=t('summaryIntro',picks.length,records.length-picks.length);
+  $('heroJudgeScore').textContent=judges.percent===null?'—':`${judges.percent}%`;
+  $('heroModelScore').textContent=model.percent===null?'—':`${model.percent}%`;
+  $('heroJudgeDetail').textContent=judges.total?t('compareCount',judges.matched,judges.total):t('compareNone');
+  $('heroModelDetail').textContent=model.total?t('compareCount',model.matched,model.total):t('compareNone');
   $('shareSummary').textContent=judges.total?t('shareSummary',judges.matched,judges.total):'';
   $('shareSummary').hidden=!judges.total;
   $('judgeScore').textContent=judges.percent===null?'—':`${judges.percent}%`;
@@ -230,6 +264,16 @@ function renderSummary(focus=true) {
   if(insight){const k=insight.dimension+'_'+insight.direction;$('insightTitle').textContent=t(k);$('insightText').textContent=t('insight',t('dimension_'+k),insight.count,insight.total);}
   else{$('insightTitle').textContent=t(picks.length?'openMind':'allSkippedTitle');$('insightText').textContent=t(picks.length?'openMindText':'allSkippedText');}
   const ids=uniquePicks(records);
+  $('summaryFeature').hidden=!ids.length;
+  $('summaryHero').classList.toggle('no-feature',!ids.length);
+  if(ids.length){
+    const art=data.artworks[ids[0]];
+    $('featureImage').src=art.image;$('featureImage').alt=art.title;
+    $('featureTitle').textContent=art.title;
+    $('featureSource').href=art.sourceUrl;
+    $('featureOpen').setAttribute('aria-label',`${t('viewDetails')}: ${art.title}`);
+    $('featureOpen').onclick=()=>openArtwork(ids[0]);
+  }
   $('insightArtwork').replaceChildren();
   if(ids.length){const button=document.createElement('button');const img=document.createElement('img');img.src=data.artworks[ids[0]].image;img.alt=data.artworks[ids[0]].title;button.append(img);button.addEventListener('click',()=>openArtwork(ids[0]));$('insightArtwork').append(button);}
   renderGallery($('roundGallery'),ids);
@@ -239,11 +283,13 @@ function renderSummary(focus=true) {
 function artworkText(art,key) { return key==='artist'&&art.artist==='Artist not recorded'?t('unknownArtist'):key==='date'&&art.date==='Date not recorded'?t('unknownDate'):art[key]; }
 function renderGallery(container,ids) {
   container.replaceChildren(...ids.map(id=>{
-    const art=data.artworks[id],button=document.createElement('button');button.className='gallery-card';button.type='button';
+    const art=data.artworks[id],card=document.createElement('article'),button=document.createElement('button');card.className='gallery-card';button.className='gallery-open';button.type='button';
     const thumb=document.createElement('span');thumb.className='thumb';const img=document.createElement('img');img.src=art.image;img.alt='';img.loading='lazy';thumb.append(img);
     const title=document.createElement('strong');title.textContent=art.title;
     const artist=document.createElement('small');artist.textContent=artworkText(art,'artist');
-    button.append(thumb,title,artist);button.setAttribute('aria-label',art.title);button.addEventListener('click',()=>openArtwork(id));return button;
+    const detail=document.createElement('span');detail.className='gallery-detail';detail.textContent=t('viewDetails');
+    const source=document.createElement('a');source.className='gallery-source';source.href=art.sourceUrl;source.target='_blank';source.rel='noopener noreferrer';source.textContent=t('viewMet');
+    button.append(thumb,title,artist,detail);button.setAttribute('aria-label',`${t('viewDetails')}: ${art.title}`);button.addEventListener('click',()=>openArtwork(id));card.append(button,source);return card;
   }));
 }
 function renderCollection() {
@@ -251,7 +297,17 @@ function renderCollection() {
   const ids=uniquePicks([...state.history].reverse());$('collectionIntro').textContent=t('collectionIntro',ids.length);$('collectionEmpty').hidden=ids.length>0;renderGallery($('collectionGrid'),ids);
 }
 function openArtwork(id) {
-  const art=data.artworks[id];$('detailImage').src=art.image;$('detailImage').alt=art.title;$('artworkTitle').textContent=art.title;$('detailArtist').textContent=artworkText(art,'artist');$('detailDate').textContent=artworkText(art,'date');$('detailSource').href=art.sourceUrl;$('artworkDialog').showModal();
+  const art=data.artworks[id];$('detailImage').src=art.image;$('detailImage').alt=art.title;$('artworkTitle').textContent=art.title;$('detailArtist').textContent=artworkText(art,'artist');$('detailDate').textContent=artworkText(art,'date');$('detailSource').href=art.sourceUrl;setZoom(1,0,0);$('artworkDialog').showModal();
+}
+function setZoom(scale,x=zoomX,y=zoomY) {
+  zoomScale=Math.max(1,Math.min(4,scale));
+  const area=$('detailImage').parentElement;
+  const limitX=area.clientWidth*(zoomScale-1)/2,limitY=area.clientHeight*(zoomScale-1)/2;
+  zoomX=Math.max(-limitX,Math.min(limitX,x));zoomY=Math.max(-limitY,Math.min(limitY,y));
+  $('detailImage').style.transform=`translate(${zoomX}px,${zoomY}px) scale(${zoomScale})`;
+  $('zoomLevel').textContent=`${Math.round(zoomScale*100)}%`;
+  $('zoomOut').disabled=zoomScale===1;$('zoomIn').disabled=zoomScale===4;
+  area.classList.toggle('can-pan',zoomScale>1);
 }
 function judgeDescription(record,field) {
   const q=pairsById.get(record.pairId)[field];if(q===null)return locale==='zh'?'尚未评测':'Awaiting review';if(q===.5)return t('tie');
@@ -279,7 +335,7 @@ async function nextRound() {
   if(!state||busy)return;
   await mutateState(current=>{
     if(current.index < current.deck.length) return false;
-    const next=buildRound(data.pairs,current.seen,10,Math.random,data.openingPairs);if(next.newCycle)current.seen=[];
+    const next=buildRound(playablePairs,current.seen,10,Math.random,preferredOpening);if(next.newCycle)current.seen=[];
     current.deck=next.deck;current.index=0;current.roundId=uuid();current.roundNumber++;current.presentation=null;
   });
   displayKey='';renderPlay();window.scrollTo({top:0,behavior:'instant'});$('main').focus({preventScroll:true});
@@ -339,6 +395,16 @@ async function syncChoices() {
 
 $('chooseLeft').addEventListener('click',()=>choose('left'));
 $('chooseRight').addEventListener('click',()=>choose('right'));
+$('zoomLeft').addEventListener('click',()=>{if(state?.deck[state.index])openArtwork(state.deck[state.index].leftId);});
+$('zoomRight').addEventListener('click',()=>{if(state?.deck[state.index])openArtwork(state.deck[state.index].rightId);});
+$('zoomIn').addEventListener('click',()=>setZoom(zoomScale+.5));
+$('zoomOut').addEventListener('click',()=>setZoom(zoomScale-.5));
+$('zoomReset').addEventListener('click',()=>setZoom(1,0,0));
+const zoomArea=$('detailImage').parentElement;
+zoomArea.addEventListener('pointerdown',event=>{if(zoomScale===1)return;dragPoint={id:event.pointerId,x:event.clientX,y:event.clientY,originX:zoomX,originY:zoomY};zoomArea.setPointerCapture(event.pointerId);});
+zoomArea.addEventListener('pointermove',event=>{if(dragPoint?.id===event.pointerId)setZoom(zoomScale,dragPoint.originX+event.clientX-dragPoint.x,dragPoint.originY+event.clientY-dragPoint.y);});
+zoomArea.addEventListener('pointerup',()=>{dragPoint=null;});
+zoomArea.addEventListener('pointercancel',()=>{dragPoint=null;});
 $('skipPair').addEventListener('click',()=>choose('skip'));
 $('nextRound').addEventListener('click',nextRound);
 $('playNav').addEventListener('click',()=>{if(state){renderPlay();window.scrollTo({top:0,behavior:'instant'});}});

@@ -43,3 +43,97 @@
   .save-notice{font-size:11px}
   .share-summary{font-size:13px}
 }
+
+/* The inspection control stays separate from choosing a painting. */
+.art-option{position:relative;min-width:0}
+.art-option .art-card{width:100%;height:100%}
+.art-option:nth-of-type(2) .art-frame{background:radial-gradient(ellipse at 50% 40%,#f0efe8,#e5e8e0)}
+.art-stage.entering .art-option .art-card{animation:next-artwork .28s ease-out both}
+.art-stage.entering .art-option:nth-of-type(2) .art-card{animation-delay:35ms}
+.art-zoom{position:absolute;z-index:3;top:16px;right:16px;display:flex;align-items:center;gap:5px;padding:8px 11px;border:1px solid #cbd6bd;border-radius:999px;background:#fffffff0;box-shadow:0 3px 12px #1b29261e;color:#304429;font-size:12px;font-weight:700}
+.art-zoom:hover{background:#e5f0d0}.art-zoom:disabled{opacity:.45;cursor:wait}
+.art-zoom span:first-child{font-size:21px;line-height:.6}
+
+/* Put the optional questions where visitors can see them on every screen. */
+.settings-button{background:#deefaa;border:1px solid #8ca661;box-shadow:0 4px 12px #52693620;padding:14px 18px;color:#243d27;font-weight:700;white-space:normal;text-align:left}
+.settings-button:hover{background:#d2e994}.settings-icon{font-size:20px}.optional-tag{font-size:11px;font-weight:500;color:#506746}
+
+/* Let the artwork and its Met source lead the result page. */
+#summaryView .section-heading{margin:10px 0 20px}
+#summaryView .art-grid{padding-bottom:28px}
+#summaryView .summary-grid{margin:16px 0 28px}
+.gallery-card{display:flex;flex-direction:column;gap:7px;min-width:0}
+.gallery-open{display:block;width:100%;padding:0;background:transparent;text-align:left}
+.gallery-open:hover .thumb{border-color:#93a96f;background:#f0f3e7}
+.gallery-detail{display:inline-block;margin-top:8px;color:#3c6338;font-size:11px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.gallery-source{display:inline-flex;align-items:center;align-self:flex-start;min-height:32px;color:#284c31;font-size:11px;font-weight:700;line-height:1.3;text-decoration:underline;text-underline-offset:3px}
+.gallery-source:hover{color:#607c31}
+.detail-source{margin:18px 0 10px}.detail-copy{align-self:start}.detail-copy .caption{margin:9px 0 0}
+.detail-image{touch-action:none;cursor:default}.detail-image.can-pan{cursor:grab}.detail-image.can-pan:active{cursor:grabbing}
+.detail-image img{transform-origin:center center;transition:transform .15s ease-out;pointer-events:none;user-select:none}
+.zoom-controls{display:flex;align-items:center;gap:10px;margin-top:16px}
+.zoom-controls button{min-width:38px;min-height:38px;border:1px solid #a5b692;border-radius:8px;background:#fff;color:#29432d;font-size:20px}
+.zoom-controls button:last-child{padding:0 12px;font-size:12px;font-weight:650}
+.zoom-controls button:disabled{opacity:.45;cursor:default}
+.zoom-controls span{min-width:44px;text-align:center;font-size:12px;font-weight:700}
+@media(max-width:560px){
+  .play-heading{display:flex;flex-direction:column;align-items:stretch;gap:17px;position:static}
+  .settings-button{position:static;display:flex;justify-content:center;width:100%;height:auto;border:1px solid #8ca661;border-radius:11px;padding:12px 15px;font-size:13px;text-align:center}
+  .settings-button>span:not(:first-child){display:inline}.settings-icon{font-size:19px}
+  .art-zoom{top:8px;right:8px;padding:7px;border-radius:50%;width:34px;height:34px;justify-content:center}
+  .art-zoom span:last-child{display:none}
+  .detail-image{margin-top:20px}
+  #summaryView .section-heading{margin-top:4px}
+}
+
+/* Result page: an editorial opening with an immediately visible museum route. */
+.summary-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:34px;align-items:stretch;margin:30px 0 38px;padding:42px 46px;min-height:420px;border-radius:20px;background:radial-gradient(circle at 8% 5%,#496047 0,#263b32 40%,#162720 100%);color:#f6f7ed;box-shadow:0 22px 50px #1c322727;overflow:hidden}
+#summaryView:focus{outline:none}
+.summary-hero.no-feature{grid-template-columns:1fr}
+.summary-heading{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0}
+.summary-heading .eyebrow{color:#c7d99c;letter-spacing:.2em;font-size:11px}
+.summary-heading h1{font-size:clamp(46px,5vw,78px);line-height:1.02;letter-spacing:-.055em;margin:13px 0 17px;max-width:620px}
+.summary-heading .intro{color:#e0e8d8;font-size:16px;line-height:1.6;margin:0}
+.summary-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;width:100%;margin-top:24px}
+.comparison-tile{display:flex;flex-direction:column;gap:4px;min-width:0;padding:13px 15px;border:1px solid #bed6a75c;border-radius:10px;background:#ffffff12}
+.comparison-tile span{color:#d4e2c6;font-size:11px;line-height:1.3;font-weight:650}
+.comparison-tile strong{font-family:var(--serif);font-size:37px;font-weight:400;line-height:1.1;letter-spacing:-.03em}
+.comparison-tile small{color:#d4e2c6;font-size:10px;line-height:1.3}
+.summary-heading .share-summary{background:transparent;border:0;color:#cbd9c1;font-size:11px;font-weight:500;line-height:1.5;padding:0;margin-top:16px}
+.summary-feature{display:flex;flex-direction:column;justify-content:center;min-width:0;gap:13px}
+.feature-art-open{display:grid;place-items:center;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);width:100%;height:255px;padding:14px;background:#e8e7dc;border:1px solid #e1e6d8;border-radius:10px;box-shadow:0 16px 34px #0b17114d;overflow:hidden}
+.feature-art-open img{display:block;min-width:0;min-height:0;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;box-shadow:0 3px 12px #1c1b1826}
+.feature-art-open:hover{background:#f1eee1}
+.feature-caption{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:7px 15px}
+.feature-caption span{grid-column:1/-1;color:#c9d7bb;font-size:10px;font-weight:700;letter-spacing:.18em}
+.feature-caption strong{font-family:var(--serif);font-size:18px;font-weight:400;line-height:1.25;min-width:0}
+.feature-caption a{color:#f4f8e9;border-bottom:1px solid #a9c58c;padding-bottom:3px;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap}
+.feature-caption a:hover{color:#d9ecb9}
+#summaryView .section-heading{border-top:1px solid #cdd6c6;padding-top:25px;margin:0 0 18px}
+#roundGallery{counter-reset:artwork;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;padding-bottom:31px}
+#roundGallery .gallery-card{counter-increment:artwork;position:relative;background:#fff;border:1px solid #e0e6d8;border-radius:13px;padding:11px 11px 13px;box-shadow:0 5px 16px #23352e0b;transition:transform .2s,box-shadow .2s}
+#roundGallery .gallery-card:hover{transform:translateY(-4px);box-shadow:0 12px 23px #23352e18}
+#roundGallery .gallery-card::before{content:counter(artwork,decimal-leading-zero);position:absolute;z-index:1;left:20px;top:20px;border-radius:100%;width:26px;height:26px;display:grid;place-items:center;background:#fffffff0;color:#40583f;font-size:10px;font-weight:750;box-shadow:0 2px 8px #23352e1a}
+#roundGallery .gallery-card .thumb{height:190px;margin-bottom:11px;background:#edece5;border:0}
+#roundGallery .gallery-card strong{font-size:13px;line-height:1.35}
+#roundGallery .gallery-source{margin-top:auto;align-self:stretch;border-top:1px solid #e4e9de;padding-top:9px;font-size:11px}
+@media(max-width:800px){
+  .summary-hero{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr);gap:24px;padding:32px;min-height:400px}
+  .summary-heading h1{font-size:clamp(43px,5vw,58px)}
+  .feature-art-open{height:220px}
+  .feature-caption{grid-template-columns:1fr}.feature-caption span{grid-column:1}.feature-caption a{justify-self:start}
+  #roundGallery{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .summary-hero{grid-template-columns:1fr;gap:24px;margin:14px 0 27px;padding:26px 23px;border-radius:16px}
+  .summary-heading h1{font-size:46px}.summary-heading .intro{font-size:13px}
+  .summary-comparison{gap:8px;margin-top:18px}.comparison-tile{padding:11px 9px}.comparison-tile span{font-size:10px}.comparison-tile strong{font-size:31px}.comparison-tile small{font-size:9px}
+  .summary-heading .share-summary{font-size:10px;margin-top:12px}
+  .feature-art-open{height:225px}.feature-caption{grid-template-columns:minmax(0,1fr) auto}.feature-caption span{grid-column:1/-1}
+  #roundGallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #roundGallery .gallery-card{padding:8px;border-radius:10px}
+  #roundGallery .gallery-card .thumb{height:150px;padding:12px}
+  #roundGallery .gallery-card strong{font-size:11px}
+  #roundGallery .gallery-card::before{left:13px;top:13px;width:22px;height:22px}
+  #roundGallery .gallery-source{font-size:10px}
+}

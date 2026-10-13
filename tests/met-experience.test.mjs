@@ -17,6 +17,7 @@ const displayFeatures = load('met_all_display_features.json');
 const visualScreen = JSON.parse(readFileSync(new URL('../Data/met_visual_screen_v1.json', import.meta.url), 'utf8'));
 const qualityReview = JSON.parse(readFileSync(new URL('../Data/met_quality_review_v2.json', import.meta.url), 'utf8'));
 const openingReview = JSON.parse(readFileSync(new URL('../Data/met_opening_pairs_v1.json', import.meta.url), 'utf8'));
+const styleMatches = load('met_style_matched_pairs.json');
 
 test('all verified Paintings are browsable and the pilot is exactly 500 new works', () => {
   assert.equal(catalog.total, 5326);
@@ -101,6 +102,30 @@ test('visually reviewed opening pairs lead a round while available', () => {
     assert.ok(round.deck.every(item => !seen.includes(item.pairId)));
     seen.push(...round.deck.map(item => item.pairId));
   }
+});
+
+test('new rounds use existing, more visually comparable evaluated pairs', () => {
+  assert.equal(styleMatches.sourceVersion,data.version);
+  assert.equal(styleMatches.pairIds.length,1200);
+  const ids=new Set(styleMatches.pairIds),byId=new Map(data.pairs.map(pair=>[pair.id,pair]));
+  assert.equal(ids.size,styleMatches.pairIds.length);
+  assert.ok([...ids].every(id=>byId.has(id)));
+  assert.ok(!ids.has('met-436899-51724'), 'the ink-versus-tempera example is excluded');
+  const catalogById=new Map(catalog.artworks.map(art=>[art.id,art]));
+  const category=id=>['oil','ink','tempera','watercolor','gouache','acrylic','fresco','pastel','lacquer'].find(term=>catalogById.get(id)?.medium.toLowerCase().includes(term));
+  for(const id of ids){
+    const pair=byId.get(id),first=data.artworks[pair.a].features,second=data.artworks[pair.b].features;
+    assert.ok(category(pair.a) && category(pair.a)===category(pair.b));
+    const distance=([['brightness',.3],['saturation',.25],['detail',.17],['symmetry',.08]]
+      .reduce((sum,[key,scale])=>sum+Math.abs(first[key]-second[key])/scale,0))/4;
+    assert.ok(distance<=.7+1e-12);
+  }
+  const selected=data.pairs.filter(pair=>ids.has(pair.id));
+  const opening=data.openingPairs.filter(id=>ids.has(id));
+  assert.equal(opening.length,16);
+  const round=buildRound(selected,[],10,Math.random,opening);
+  assert.equal(round.deck.length,10);
+  assert.ok(round.deck.every(item=>ids.has(item.pairId)));
 });
 
 test('new pairs can be played with judge agreement, model agreement and measured features', () => {

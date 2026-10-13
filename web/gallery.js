@@ -4,27 +4,30 @@ const LOCALE_KEY = 'follow-your-eye-language';
 let locale = 'en';
 try { locale = localStorage.getItem(LOCALE_KEY) === 'zh' ? 'zh' : 'en'; } catch {}
 let artworks = [], filtered = [], shown = 0, period = 'all';
+let zoomScale = 1, zoomX = 0, zoomY = 0, dragPoint = null;
 
 const words = {
   en: {
     play:'The experiment', gallery:'Met gallery', about:'The idea', private:'Public experience', eyebrow:'THE MET · OPEN ACCESS',
     title:'A world of paintings.', intro:'Explore 5,326 verified public-domain Paintings, created between 1300 and 1914. Follow a detail that catches your eye.',
-    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. The visually screened choice deck has 2,751 pairs; the 2,273 new pairs have six AI-judge votes and feature-model predictions.',
+    playButton:'Try the 10-choice experience', context:'Browse all 5,326 Paintings. The experience draws from 1,200 more comparable pairs selected from 2,751 evaluated pairs.',
     searchLabel:'Search artworks, artists, or Met IDs', searchPlaceholder:'A title, artist, or number', all:'All periods', pilot:'First 500 new works', pilotBadge:'First 500-work set',
     results:n=>`${n.toLocaleString('en-US')} painting${n===1?'':'s'}`, more:'See more paintings', none:'No paintings match these filters.',
     errorTitle:'The gallery could not open.', errorText:'Please check your connection and refresh this page.',
     footer:'Images and artwork data: The Metropolitan Museum of Art Open Access (CC0)', policy:'The Met Open Access',
-    dialogEyebrow:'FROM THE MET COLLECTION', source:'Explore at The Met', note:'An online collection record does not mean this artwork is currently on view.',
+    dialogEyebrow:'FROM THE MET COLLECTION', source:'Explore at The Met ↗', note:'An online collection record does not mean this artwork is currently on view.',
+    zoomIn:'Zoom in', zoomOut:'Zoom out', zoomReset:'Reset', zoomHint:'Drag the image to explore details.',
   },
   zh: {
     play:'开始探索', gallery:'大都会画廊', about:'关于实验', private:'公开体验', eyebrow:'大都会博物馆 · 开放资源',
     title:'走进五千多幅画。', intro:'浏览 5,326 幅已核验的公有领域 Paintings，创作起始年代为 1300 至 1914 年。看看哪一处细节吸引你。',
-    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。经过画面适用性筛选的题库有 2,751 组；其中 2,273 组新画对均有六位 AI 评委投票和特征模型预测。',
+    playButton:'试试 10 组选择', context:'画廊保留全部 5,326 幅 Paintings。体验从 2,751 组已评测画对中，选用 1,200 组画面较可比的配对。',
     searchLabel:'搜索作品、画家或馆方编号', searchPlaceholder:'输入作品名、画家或编号', all:'全部年代', pilot:'首批 500 幅新画', pilotBadge:'首批 500 幅',
     results:n=>`${n.toLocaleString('zh-CN')} 幅画作`, more:'查看更多画作', none:'没有符合条件的画作。',
     errorTitle:'画廊暂时无法打开。', errorText:'请检查网络连接并刷新页面。',
     footer:'图像及作品资料：大都会博物馆 Open Access（CC0）', policy:'大都会开放资源',
-    dialogEyebrow:'来自大都会博物馆馆藏', source:'在大都会官网继续探索', note:'网上有藏品记录，不代表作品目前正在展出。',
+    dialogEyebrow:'来自大都会博物馆馆藏', source:'前往大都会藏品页 ↗', note:'网上有藏品记录，不代表作品目前正在展出。',
+    zoomIn:'放大', zoomOut:'缩小', zoomReset:'重置', zoomHint:'拖动画面查看更多细节。',
   },
 };
 const t = key => words[locale][key];
@@ -32,7 +35,9 @@ const t = key => words[locale][key];
 function translate() {
   document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
   document.title = locale === 'zh' ? '大都会画廊 — Follow Your Eye' : 'Met Paintings — Follow Your Eye';
-  for (const [id,key] of Object.entries({playLink:'play',galleryLink:'gallery',aboutLink:'about',privateLabel:'private',eyebrow:'eyebrow',heroTitle:'title',heroIntro:'intro',playButton:'playButton',galleryContext:'context',searchLabel:'searchLabel',pilotLabel:'pilot',loadMore:'more',errorTitle:'errorTitle',errorText:'errorText',footerText:'footer',sourcePolicy:'policy',dialogEyebrow:'dialogEyebrow',dialogSource:'source',dialogNote:'note'})) $(id).textContent=t(key);
+  for (const [id,key] of Object.entries({playLink:'play',galleryLink:'gallery',aboutLink:'about',privateLabel:'private',eyebrow:'eyebrow',heroTitle:'title',heroIntro:'intro',playButton:'playButton',galleryContext:'context',searchLabel:'searchLabel',pilotLabel:'pilot',loadMore:'more',errorTitle:'errorTitle',errorText:'errorText',footerText:'footer',sourcePolicy:'policy',dialogEyebrow:'dialogEyebrow',dialogSource:'source',dialogNote:'note',galleryZoomReset:'zoomReset',galleryZoomHint:'zoomHint'})) $(id).textContent=t(key);
+  $('galleryZoomIn').setAttribute('aria-label',t('zoomIn'));
+  $('galleryZoomOut').setAttribute('aria-label',t('zoomOut'));
   $('searchArt').placeholder=t('searchPlaceholder');
   $('languageToggle').textContent=locale==='en'?'中文':'EN';
   $('languageToggle').setAttribute('aria-label',locale==='en'?'Switch interface to Chinese':'切换为英文');
@@ -71,8 +76,26 @@ function renderResults(reset=false) {
 function openArtwork(art) {
   $('dialogImage').src=art.image;$('dialogImage').alt=art.title;$('dialogTitle').textContent=art.title;
   $('dialogArtist').textContent=art.artist;$('dialogDate').textContent=art.date;$('dialogMedium').textContent=art.medium||'';
-  $('dialogSource').href=art.sourceUrl;$('artDialog').showModal();
+  $('dialogSource').href=art.sourceUrl;setGalleryZoom(1,0,0);$('artDialog').showModal();
 }
+function setGalleryZoom(scale,x=zoomX,y=zoomY) {
+  zoomScale=Math.max(1,Math.min(4,scale));
+  const area=$('dialogImage').parentElement;
+  const limitX=area.clientWidth*(zoomScale-1)/2,limitY=area.clientHeight*(zoomScale-1)/2;
+  zoomX=Math.max(-limitX,Math.min(limitX,x));zoomY=Math.max(-limitY,Math.min(limitY,y));
+  $('dialogImage').style.transform=`translate(${zoomX}px,${zoomY}px) scale(${zoomScale})`;
+  $('galleryZoomLevel').textContent=`${Math.round(zoomScale*100)}%`;
+  $('galleryZoomOut').disabled=zoomScale===1;$('galleryZoomIn').disabled=zoomScale===4;
+  area.classList.toggle('can-pan',zoomScale>1);
+}
+$('galleryZoomIn').addEventListener('click',()=>setGalleryZoom(zoomScale+.5));
+$('galleryZoomOut').addEventListener('click',()=>setGalleryZoom(zoomScale-.5));
+$('galleryZoomReset').addEventListener('click',()=>setGalleryZoom(1,0,0));
+const zoomArea=$('dialogImage').parentElement;
+zoomArea.addEventListener('pointerdown',event=>{if(zoomScale===1)return;dragPoint={id:event.pointerId,x:event.clientX,y:event.clientY,originX:zoomX,originY:zoomY};zoomArea.setPointerCapture(event.pointerId);});
+zoomArea.addEventListener('pointermove',event=>{if(dragPoint?.id===event.pointerId)setGalleryZoom(zoomScale,dragPoint.originX+event.clientX-dragPoint.x,dragPoint.originY+event.clientY-dragPoint.y);});
+zoomArea.addEventListener('pointerup',()=>{dragPoint=null;});
+zoomArea.addEventListener('pointercancel',()=>{dragPoint=null;});
 
 $('languageToggle').addEventListener('click',()=>{locale=locale==='en'?'zh':'en';try{localStorage.setItem(LOCALE_KEY,locale);}catch{}translate();});
 $('searchArt').addEventListener('input',applyFilters);

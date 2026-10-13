@@ -12,9 +12,9 @@
   <meta property="og:image" content="https://vincentliu.ai/img/436940.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <title>Met Paintings — Follow Your Eye</title>
-  <link rel="stylesheet" href="style.css?v=20261011-v3">
+  <link rel="stylesheet" href="style.css?v=20261012-v4">
   <link rel="stylesheet" href="gallery.css">
-  <script type="module" src="gallery.js?v=20261011-v3"></script>
+  <script type="module" src="gallery.js?v=20261012-v4"></script>
 </head>
 <body>
   <a class="skip-link" href="#galleryMain">Skip to the gallery</a>
@@ -34,7 +34,7 @@
         <div><p class="eyebrow" id="eyebrow">THE MET · OPEN ACCESS</p><h1 id="heroTitle">A world of paintings.</h1><p class="intro" id="heroIntro">Explore 5,326 verified public-domain Paintings, created between 1300 and 1914. Follow a detail that catches your eye.</p></div>
         <a class="primary-button" href="./" id="playButton">Try the 10-choice experience</a>
       </section>
-      <div class="gallery-context" id="galleryContext">Browse all 5,326 Paintings. The visually screened choice deck has 2,751 pairs, with six AI-judge votes for every new pair.</div>
+      <div class="gallery-context" id="galleryContext">Browse all 5,326 Paintings. The experience draws from 1,200 more comparable pairs selected from 2,751 evaluated pairs.</div>
       <section class="gallery-controls" aria-label="Filter artworks">
         <label class="gallery-search-label" for="searchArt" id="searchLabel">Search artworks, artists, or Met IDs</label>
         <input id="searchArt" class="gallery-search" type="search" autocomplete="off" placeholder="A title, artist, or number">
@@ -50,7 +50,7 @@
 
   <dialog id="artDialog" class="artwork-dialog" aria-labelledby="dialogTitle">
     <form method="dialog"><button class="dialog-close" aria-label="Close artwork details">×</button></form>
-    <div class="artwork-dialog-grid"><div class="detail-image"><img id="dialogImage" alt=""></div><div class="detail-copy"><p class="eyebrow" id="dialogEyebrow">FROM THE MET COLLECTION</p><h2 id="dialogTitle"></h2><p class="artist-name" id="dialogArtist"></p><p class="detail-date" id="dialogDate"></p><p class="detail-date" id="dialogMedium"></p><div class="detail-divider"></div><a id="dialogSource" class="primary-button" target="_blank" rel="noopener noreferrer">Explore at The Met</a><p class="caption" id="dialogNote">An online collection record does not mean this artwork is currently on view.</p></div></div>
+    <div class="artwork-dialog-grid"><div class="detail-image"><img id="dialogImage" alt=""></div><div class="detail-copy"><p class="eyebrow" id="dialogEyebrow">FROM THE MET COLLECTION</p><h2 id="dialogTitle"></h2><p class="artist-name" id="dialogArtist"></p><p class="detail-date" id="dialogDate"></p><p class="detail-date" id="dialogMedium"></p><a id="dialogSource" class="primary-button detail-source" target="_blank" rel="noopener noreferrer">Explore at The Met ↗</a><div class="zoom-controls"><button id="galleryZoomOut" type="button" aria-label="Zoom out">−</button><span id="galleryZoomLevel" aria-live="polite">100%</span><button id="galleryZoomIn" type="button" aria-label="Zoom in">+</button><button id="galleryZoomReset" type="button">Reset</button></div><p class="caption" id="galleryZoomHint">Drag the image to explore details.</p><p class="caption" id="dialogNote">An online collection record does not mean this artwork is currently on view.</p></div></div>
   </dialog>
 </body>
 </html>
