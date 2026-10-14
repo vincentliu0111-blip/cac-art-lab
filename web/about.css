@@ -13,11 +13,8 @@
 .about-content .about-zh-kicker{margin:25px 0 8px;font-size:10px;font-weight:700;letter-spacing:.16em;color:#6e805f}
 .about-zh-body h2{max-width:640px;margin:0 0 14px;font-size:clamp(27px,3.5vw,38px);line-height:1.35;letter-spacing:-.025em;color:var(--ink)}
 .about-content .about-zh-lead{max-width:700px;margin:0 0 26px;font-size:17px;line-height:1.9;color:#33483a}
-.about-zh-notice{margin:0 0 12px;padding:19px 22px;border-left:3px solid #8ca770;border-radius:0 9px 9px 0;background:#e6edda}
-.about-zh-notice strong{display:block;margin-bottom:5px;font-size:14px;color:#2c4434}
-.about-content .about-zh-notice p{margin:0;color:#465b4b}
 .about-zh-body section{padding:22px 0 2px;border-top:1px solid #dce4d5}
 .about-zh-body h3{margin:0 0 10px;color:#263b30;font-size:19px;font-weight:650;line-height:1.5}
 .about-content .about-zh-body section p{margin:0 0 15px;line-height:1.9}
 .about-zh-body section p:last-child{margin-bottom:14px}
-@media(max-width:560px){.about-zh{margin-top:35px}.about-zh>summary{padding:18px;font-size:15px}.about-zh-hint{font-size:11px}.about-zh-body{padding:0 18px 19px}.about-content .about-zh-lead{font-size:15px}.about-zh-notice{padding:16px}.about-zh-body h3{font-size:17px}}
+@media(max-width:560px){.about-zh{margin-top:35px}.about-zh>summary{padding:18px;font-size:15px}.about-zh-hint{font-size:11px}.about-zh-body{padding:0 18px 19px}.about-content .about-zh-lead{font-size:15px}.about-zh-body h3{font-size:17px}}
