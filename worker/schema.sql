@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS experience_choices (
   environment TEXT NOT NULL CHECK (environment IN ('production','test')),
   payload_json TEXT NOT NULL,
   country_code TEXT CHECK (country_code IS NULL OR country_code GLOB '[A-Z][A-Z]'),
+  client_ip TEXT CHECK (client_ip IS NULL OR length(client_ip) BETWEEN 3 AND 45),
   UNIQUE (session_id,round_id,pair_id),
   UNIQUE (session_id,round_id,position)
 );

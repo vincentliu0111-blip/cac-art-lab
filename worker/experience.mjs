@@ -6,7 +6,7 @@ const FIELDS = ['id', 'sessionId', 'roundId', 'datasetVersion', 'pairId', 'leftI
   'choice', 'position', 'layout', 'source', 'shownAt', 'chosenAt', 'elapsedMs', 'profile', 'consent'];
 const CSV_FIELDS = ['id', 'session_id', 'round_id', 'dataset_version', 'pair_id', 'position',
   'left_artwork_id', 'right_artwork_id', 'choice', 'layout', 'source', 'mood', 'interests_json',
-  'language', 'shown_at', 'chosen_at', 'elapsed_ms', 'received_at', 'environment', 'country_code'];
+  'language', 'shown_at', 'chosen_at', 'elapsed_ms', 'received_at', 'environment', 'country_code', 'client_ip'];
 const MOODS = ['', 'calm', 'curious', 'energized', 'reflective'];
 const INTERESTS = ['landscape', 'people', 'nature', 'abstract', 'stories', 'details'];
 const LANGUAGES = ['', 'en', 'zh', 'es', 'fr', 'other'];
@@ -43,9 +43,23 @@ function countryCode(request) {
     ? code : null;
 }
 
+function clientIp(request) {
+  const value = request.headers.get('CF-Connecting-IP');
+  if (!value || value.length > 45) return null;
+  if (value.includes(':')) {
+    try { new URL(`http://[${value}]/`); return value; } catch { return null; }
+  }
+  const octets = value.split('.');
+  return octets.length === 4 && octets.every(part => /^\d{1,3}$/.test(part) &&
+    Number(part) <= 255 && String(Number(part)) === part) ? value : null;
+}
+
 export function validateExperienceEvent(value, now = Date.now()) {
+  const hasIpNotice = value && Object.hasOwn(value, 'ipNoticeVersion');
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      Object.keys(value).length !== FIELDS.length || FIELDS.some(key => !Object.hasOwn(value, key)))
+      Object.keys(value).length !== FIELDS.length + Number(hasIpNotice) ||
+      FIELDS.some(key => !Object.hasOwn(value, key)) ||
+      (hasIpNotice && value.ipNoticeVersion !== 1))
     return 'Unexpected or missing event fields';
   if (![value.id, value.sessionId, value.roundId].every(id => typeof id === 'string' && UUID.test(id)))
     return 'Invalid event identifiers';
@@ -83,16 +97,17 @@ async function save(request, env) {
   const environment = await env.DB.prepare('SELECT session_id FROM test_sessions WHERE session_id = ?')
     .bind(value.sessionId).first() ? 'test' : 'production';
   const country = countryCode(request);
+  const ip = value.ipNoticeVersion === 1 ? clientIp(request) : null;
   const payload = JSON.stringify(value);
   const result = await env.DB.prepare(`INSERT OR IGNORE INTO experience_choices
     (id,session_id,round_id,dataset_version,pair_id,position,left_artwork_id,right_artwork_id,
      choice,layout,source,mood,interests_json,language,shown_at,chosen_at,elapsed_ms,
-     received_at,environment,payload_json,country_code)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+     received_at,environment,payload_json,country_code,client_ip)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
       value.id, value.sessionId, value.roundId, value.datasetVersion, value.pairId, value.position,
       value.leftId, value.rightId, value.choice, value.layout, value.source, value.profile.mood,
       JSON.stringify(value.profile.interests), value.profile.language, value.shownAt, value.chosenAt,
-      value.elapsedMs, new Date().toISOString(), environment, payload, country).run();
+      value.elapsedMs, new Date().toISOString(), environment, payload, country, ip).run();
   if (result.meta?.changes === 1) return json({ok:true,duplicate:false,id:value.id}, 201);
   const previous = await env.DB.prepare(`SELECT id,payload_json FROM experience_choices
     WHERE id = ? OR (session_id = ? AND round_id = ? AND (pair_id = ? OR position = ?)) LIMIT 1`)
@@ -175,6 +190,19 @@ export async function adminExperience(env, url) {
       COUNT(DISTINCT session_id) AS sessions FROM experience_choices
       WHERE environment = ? AND dataset_version = ?
       GROUP BY country_code ORDER BY choices DESC,country_code`)
+      .bind(environment, manifest.version).all()).results;
+    return json({ok:true,datasetVersion:manifest.version,environment,groups:rows});
+  }
+  if (url.pathname === '/admin/experience-ips') {
+    const environment = url.searchParams.get('environment') ?? 'production';
+    if (!['production','test'].includes(environment) ||
+        [...url.searchParams.keys()].some(key => key !== 'environment'))
+      return json({ok:false,error:'Invalid environment'}, 400);
+    const rows = (await env.DB.prepare(`SELECT client_ip,COUNT(*) AS choices,
+      COUNT(DISTINCT session_id) AS sessions,MIN(received_at) AS first_seen,
+      MAX(received_at) AS last_seen FROM experience_choices
+      WHERE environment = ? AND dataset_version = ? AND client_ip IS NOT NULL
+      GROUP BY client_ip ORDER BY choices DESC,client_ip`)
       .bind(environment, manifest.version).all()).results;
     return json({ok:true,datasetVersion:manifest.version,environment,groups:rows});
   }

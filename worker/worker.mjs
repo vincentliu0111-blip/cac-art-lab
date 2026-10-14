@@ -31,7 +31,8 @@ async function authorized(request, env) {
 
 async function admin(request, env, path, url) {
     if (!await authorized(request, env)) return json({ ok: false, error: 'Unauthorized' }, 401);
-    if (['/admin/experience-summary','/admin/experience-countries','/admin/experience.csv'].includes(path)
+    if (['/admin/experience-summary','/admin/experience-countries',
+        '/admin/experience-ips','/admin/experience.csv'].includes(path)
         && request.method === 'GET')
         return adminExperience(env, url);
     if (path === '/admin/summary' && request.method === 'GET') {
