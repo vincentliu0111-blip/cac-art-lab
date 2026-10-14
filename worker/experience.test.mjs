@@ -105,6 +105,7 @@ test('online v7 save, retry, conflict, community and private export use real SQL
   assert.match(csv,/"US"/);
   const testCountries=await (await call(env,'/admin/experience-countries?environment=test','GET',null,'owner-secret')).json();
   assert.deepEqual(testCountries.groups,[{country_code:'US',choices:1,sessions:1}]);
+  assert.equal((await (await call(env,'/experience/choice-count')).json()).choices,0);
   const community=await (await call(env,`/experience/community?pairs=${pick.pairId}`)).json();
   assert.deepEqual(community.pairs[pick.pairId],{a:0,b:0,total:0});
   const deleted=await (await call(env,`/admin/test-sessions/${session}`,'DELETE',null,'owner-secret')).json();
@@ -120,6 +121,9 @@ test('online v7 save, retry, conflict, community and private export use real SQL
   assert.equal(DB.sqlite.prepare('SELECT country_code FROM experience_choices WHERE id = ?').get(unknown.id).country_code,null);
   const counts=await (await call(env,`/experience/community?pairs=${pick.pairId}`)).json();
   assert.deepEqual(counts.pairs[pick.pairId],{a:1,b:1,total:2});
+  const publicCount=await call(env,'/experience/choice-count');
+  assert.equal(publicCount.headers.get('cache-control'),'no-store');
+  assert.deepEqual(await publicCount.json(),{ok:true,datasetVersion:manifest.version,choices:2});
   const summary=await (await call(env,'/admin/experience-summary','GET',null,'owner-secret')).json();
   assert.deepEqual(summary.groups,[{environment:'production',dataset_version:manifest.version,choices:3,sessions:2}]);
   assert.equal((await call(env,'/admin/experience-countries')).status,401);

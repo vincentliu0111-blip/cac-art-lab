@@ -143,11 +143,29 @@ def human_statistics(csv_path, pairs):
         comparison["interval95"] = session_bootstrap(
             [(r["session_id"], r["choice"], choice) for r, choice in zip(eligible, reference)])
         result["comparisons"][name] = comparison
+    result["aiByRatingSource"] = {}
+    for source in ("original-study", "six-judge-met-v1", "six-judge-met-all-v1"):
+        eligible = [r for r in selected if pairs[r["pair_id"]]["ratingSource"] == source
+                    and pairs[r["pair_id"]]["qA"] is not None
+                    and pairs[r["pair_id"]]["qA"] != 0.5]
+        result["aiByRatingSource"][source] = cohen_kappa(
+            [r["choice"] for r in eligible],
+            ["A" if pairs[r["pair_id"]]["qA"] > 0.5 else "B" for r in eligible])
+    hour_counts = Counter(r["received_at"][:13] for r in selected)
+    busiest_hour, busiest_count = hour_counts.most_common(1)[0] if hour_counts else (None, 0)
+    result["collectionContext"] = {
+        "busiestUtcHour": busiest_hour,
+        "choicesInBusiestHour": busiest_count,
+        "choicesUnderOneSecond": sum(int(r["elapsed_ms"]) < 1000 for r in selected),
+    }
     if rows:
         latest = max(datetime.fromisoformat(r["received_at"].replace("Z", "+00:00")) for r in rows)
-        result["asOf"] = latest.astimezone(ZoneInfo("America/New_York")).date().isoformat()
+        local = latest.astimezone(ZoneInfo("America/New_York"))
+        result["asOf"] = local.date().isoformat()
+        result["asOfTime"] = local.strftime("%Y-%m-%d %H:%M %Z")
     else:
         result["asOf"] = None
+        result["asOfTime"] = None
     return result
 
 

@@ -177,41 +177,67 @@
     }
   },
   "human": {
-    "savedEvents": 238,
-    "choices": 237,
-    "anonymousSessions": 22,
-    "distinctPairs": 189,
-    "maxChoicesOnOnePair": 9,
-    "pairsWithMultipleSessions": 22,
+    "savedEvents": 1584,
+    "choices": 1583,
+    "anonymousSessions": 160,
+    "distinctPairs": 879,
+    "maxChoicesOnOnePair": 10,
+    "pairsWithMultipleSessions": 399,
     "comparisons": {
       "aiJudges": {
-        "n": 237,
-        "agreement": 0.5569620253164557,
-        "expected": 0.49895850024034605,
-        "kappa": 0.11576590981771669,
+        "n": 1583,
+        "agreement": 0.7479469361970941,
+        "expected": 0.5052418522927392,
+        "kappa": 0.49055298033810035,
         "interval95": {
-          "lower": 0.0,
-          "upper": 0.19174574451310616,
-          "sessions": 22,
+          "lower": 0.44837989313640997,
+          "upper": 0.531395763986113,
+          "sessions": 160,
           "iterations": 10000,
           "method": "session-cluster-percentile"
         }
       },
       "featureModel": {
-        "n": 237,
-        "agreement": 0.5907172995780591,
-        "expected": 0.49895850024034605,
-        "kappa": 0.18313612621255737,
+        "n": 1577,
+        "agreement": 0.6385542168674698,
+        "expected": 0.5048584016672772,
+        "kappa": 0.2700153161244843,
         "interval95": {
-          "lower": 0.07836727287284007,
-          "upper": 0.27153088726368385,
-          "sessions": 22,
+          "lower": 0.22594534837340383,
+          "upper": 0.3126081930289572,
+          "sessions": 160,
           "iterations": 10000,
           "method": "session-cluster-percentile"
         }
       }
     },
-    "asOf": "2026-10-13"
+    "aiByRatingSource": {
+      "original-study": {
+        "n": 221,
+        "agreement": 0.6832579185520362,
+        "expected": 0.4941954505436007,
+        "kappa": 0.373785621761658
+      },
+      "six-judge-met-v1": {
+        "n": 179,
+        "agreement": 0.7653631284916201,
+        "expected": 0.5010143253955869,
+        "kappa": 0.5297723292469353
+      },
+      "six-judge-met-all-v1": {
+        "n": 1183,
+        "agreement": 0.757396449704142,
+        "expected": 0.5072508608499245,
+        "kappa": 0.5076530205322818
+      }
+    },
+    "collectionContext": {
+      "busiestUtcHour": "2026-10-14T02",
+      "choicesInBusiestHour": 1376,
+      "choicesUnderOneSecond": 28
+    },
+    "asOf": "2026-10-14",
+    "asOfTime": "2026-10-14 07:48 EDT"
   },
   "notes": [
     "The six-judge sample is the 2,272-pair evaluated vote file, not all active pairs.",

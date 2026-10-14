@@ -121,6 +121,13 @@ async function community(url, env) {
   return json({ok:true,pairs});
 }
 
+async function choiceCount(env) {
+  const row = await env.DB.prepare(`SELECT COUNT(*) AS choices FROM experience_choices
+    WHERE environment = 'production' AND dataset_version = ? AND choice IN ('A','B')`)
+    .bind(manifest.version).first();
+  return json({ok:true, datasetVersion:manifest.version, choices:row.choices});
+}
+
 export async function handleExperience(request, env, url) {
   const origin = request.headers.get('origin');
   if (origin !== env.ALLOWED_ORIGIN) return json({ok:false,error:'Not found'}, 404);
@@ -134,6 +141,8 @@ export async function handleExperience(request, env, url) {
       response = await save(request, env);
     else if (url.pathname === '/experience/community' && request.method === 'GET')
       response = await community(url, env);
+    else if (url.pathname === '/experience/choice-count' && request.method === 'GET')
+      response = await choiceCount(env);
     else response = json({ok:false,error:'Not found'}, 404);
     const merged = new Headers(response.headers);
     for (const [key, val] of Object.entries(headers)) merged.set(key, val);
