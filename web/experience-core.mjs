@@ -83,6 +83,23 @@ export function agreement(records, pairsById, field = 'qA') {
   }
   return {matched, total, percent: total ? Math.round(matched / total * 100) : null};
 }
+export function cohenKappa(records, pairsById, field = 'qA') {
+  let total = 0, matched = 0, userA = 0, referenceA = 0;
+  for (const record of records) {
+    if (record.choice !== 'A' && record.choice !== 'B') continue;
+    const value = pairsById.get(record.pairId)?.[field];
+    if (!Number.isFinite(value) || value === 0.5) continue;
+    const reference = value > 0.5 ? 'A' : 'B';
+    total++;
+    matched += record.choice === reference;
+    userA += record.choice === 'A';
+    referenceA += reference === 'A';
+  }
+  if (!total) return {total, kappa: null};
+  const observed = matched / total;
+  const expected = (userA * referenceA + (total - userA) * (total - referenceA)) / (total * total);
+  return {total, kappa: expected < 1 ? (observed - expected) / (1 - expected) : null};
+}
 export function getInsight(records, pairsById, artworks) {
   const dimensions = ['brightness', 'saturation', 'detail', 'symmetry'];
   const results = dimensions.map(dimension => {

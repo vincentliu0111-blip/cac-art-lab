@@ -13,7 +13,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>The idea — Follow Your Eye</title>
   <link rel="stylesheet" href="style.css?v=20261012-v4">
-  <link rel="stylesheet" href="about.css?v=20261013-v1">
+  <link rel="stylesheet" href="about.css?v=20261013-v2">
+  <script defer src="agreement-summary.js?v=20261013-v1"></script>
 </head>
 <body>
   <div class="app-shell">
@@ -29,6 +30,13 @@
       <h2>Your view and the AI</h2>
       <p>The original pairs use the supplied AI-judge and feature-model results. Every active new pair has votes from the same six AI-judge configurations and a feature-model prediction from a numerical reproduction of the original method. The reproduction matched the saved old predictions to four decimal places, but its model fingerprint was not identical. No AI service is called while you choose. Agreement measures shared preferences, not accuracy or objective beauty.</p>
       <p>A short round observation may describe brightness, saturation, detail or symmetry. These are image measurements, not explanations of why you or an AI system preferred an artwork.</p>
+      <section class="agreement-explainer" aria-labelledby="agreementHeading">
+        <h2 id="agreementHeading">Who agrees with whom?</h2>
+        <p id="agreementAi">Loading the agreement snapshot…</p>
+        <p id="agreementRepeat"></p>
+        <p id="agreementPeople"></p>
+        <p class="agreement-caveat">A CMU professor suggested adding a chance-adjusted comparison. Codex assisted with the analysis code and website display. Kappa adjusts for agreement expected from each side’s overall A/B choices. The labels “slight,” “fair” and “moderate” are conventions, not grades. The visitor intervals resample anonymous browser sessions, which are not verified people. Agreement says nothing about which choice is right. This snapshot is updated by rerunning the analysis; it is not live.</p>
+      </section>
       <h2>How choices are saved</h2>
       <p>Each saved event includes random browser and round IDs, the dataset and pair IDs, left/right order, choice or skip, round position, client timestamps and elapsed time, a short source label, any optional mood, interests or language you entered, and an approximate country or region inferred by Cloudflare from your connection. The country may be unknown or inaccurate, for example when using a VPN. The server adds its receipt time. Duplicate retries use the same event ID. Browser progress also stays on this device. Starting over does not erase records already received online.</p>
       <p>The app database does not store names, email addresses, raw IP addresses or precise locations. The study owner can view the country alongside each choice; public vote totals do not show it. Choices saved before this update have no country information. Cloudflare may process IP addresses in network and service logs. Collected votes can include repeat participation, so browser IDs and vote counts are not verified numbers of distinct people.</p>
@@ -50,6 +58,10 @@
           <section aria-labelledby="zh-ai"><h3 id="zh-ai">AI 在这里做什么？</h3>
             <p>原题库沿用已有的 AI 评审和图像特征模型结果；新增画对也取得相同六套 AI 评审配置的结果。图像特征预测按原方法重新计算：旧结果核对到小数点后四位一致，但模型文件的指纹并不相同。你选画时不会实时调用 AI。</p>
             <p>结果里的“一致”只表示你和 AI 在这些画对上作出了相同选择，不代表判断正确，也不是美的客观分数。页面提到的亮度、饱和度、细节或对称性是图像测量值，不能解释你为什么喜欢一幅画。参与者也并非随机抽样；票数不等于独立人数，更不代表大众审美。</p>
+            <div class="agreement-explainer" aria-labelledby="agreementHeadingZh"><h3 id="agreementHeadingZh">谁和谁意见一致？</h3>
+              <p id="agreementAiZh">正在加载一致性统计快照……</p><p id="agreementRepeatZh"></p><p id="agreementPeopleZh"></p>
+              <p class="agreement-caveat">加入扣除碰巧一致的比较，来自一位 CMU 教授的建议；统计程序和网站展示由 Codex 协助实现。Kappa 会按双方总体 A/B 选择比例计算预期的一致。“轻微、一般、中等”只是常用约定，不是成绩。访客区间按匿名浏览器会话重新抽样，会话不等于已核实的人。这个指标也不能判断谁选得对。统计需要重新运行脚本才更新，并非实时数字。</p>
+            </div>
           </section>
           <section aria-labelledby="zh-data"><h3 id="zh-data">你的选择如何保存？</h3>
             <p>每条记录包含随机生成的浏览器和轮次编号、画对与数据版本、左右位置、选择或跳过、题目序号、时间与耗时、简短来源标记，以及你自愿填写的心情、兴趣和语言。服务器还会记录接收时间。浏览进度也保存在当前设备；重新开始不会删除已经传到线上的记录。</p>

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
-  ROUND_SIZE, buildRound, agreement, getInsight, chosenArtwork,
+  ROUND_SIZE, buildRound, agreement, cohenKappa, getInsight, chosenArtwork,
   validProfile, validTimestamp, validRecord, isValidState,
 } from '../web/experience-core.mjs';
 
@@ -121,6 +121,22 @@ test('skips and exact AI ties are excluded independently from each agreement den
   assert.deepEqual(agreement([records[3]], fixture), {matched: 0, total: 0, percent: null});
   assert.deepEqual(agreement([{...records[0], pairId: 'missing'}], fixture),
                    {matched: 0, total: 0, percent: null});
+});
+
+test('round kappa uses observed marginals and handles ties and a zero chance denominator', () => {
+  const source = data.pairs.slice(0, 5);
+  const fixture = new Map(source.map((pair, i) => [pair.id,
+    {...pair, qA: [.9, .9, .9, .1, .5][i]}]));
+  const records = source.map((pair, i) => makeRecord(pair, i + 1,
+    {choice: ['A', 'A', 'B', 'B', 'A'][i], leftId: pair.b, rightId: pair.a}));
+  const result = cohenKappa(records, fixture);
+  assert.equal(result.total, 4);
+  // 3/4 observed, 1/2 expected from the two actual A/B marginal distributions.
+  assert.equal(result.kappa, .5);
+  assert.deepEqual(cohenKappa(records.map(r => ({...r, choice: 'skip'})), fixture),
+                   {total: 0, kappa: null});
+  const unanimous = new Map(source.map(pair => [pair.id, {...pair, qA: .9}]));
+  assert.deepEqual(cohenKappa(records.slice(0, 2), unanimous), {total: 2, kappa: null});
 });
 
 test('canonical choices refer to the same artwork after a left/right reversal', () => {

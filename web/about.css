@@ -1,4 +1,8 @@
 .about-zh{margin:52px 0 0;border:1px solid #dce4d5;border-radius:16px;background:#f0f3e9;overflow:hidden}
+.agreement-explainer{margin:34px 0;padding:22px 27px;border:1px solid #dce4d5;border-radius:14px;background:#f4f6ed}
+.about-content .agreement-explainer h2,.about-content .agreement-explainer h3{margin:0 0 15px;color:#263b30}
+.about-content .agreement-explainer p{margin:0 0 10px;color:#33483a}
+.about-content .agreement-explainer .agreement-caveat{margin:16px 0 0;font-size:12px;color:#657263}
 .about-zh>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 28px;cursor:pointer;list-style:none;color:var(--ink);font-size:17px;font-weight:650}
 .about-zh>summary::-webkit-details-marker{display:none}
 .about-zh-hint{font-size:12px;font-weight:500;color:#60715f;white-space:nowrap}

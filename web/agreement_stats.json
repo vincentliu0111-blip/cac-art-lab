@@ -1,0 +1,222 @@
+{
+  "method": "canonical-artwork-A-B",
+  "datasetVersion": "follow-your-eye-met-paintings-v3",
+  "ai": {
+    "fleiss": {
+      "nPairs": 2272,
+      "nJudges": 6,
+      "agreement": 0.7490610328638497,
+      "expected": 0.503068975029756,
+      "kappa": 0.49502253929269885
+    },
+    "pairwise": [
+      {
+        "left": "ANT_HAIKU45",
+        "right": "ANT_SONNET5",
+        "n": 2272,
+        "agreement": 0.730193661971831,
+        "expected": 0.49971716301329105,
+        "kappa": 0.4606923962187874
+      },
+      {
+        "left": "ANT_HAIKU45",
+        "right": "OAI_LUNA_M",
+        "n": 2272,
+        "agreement": 0.7130281690140845,
+        "expected": 0.5009783060156715,
+        "kappa": 0.424931151400148
+      },
+      {
+        "left": "ANT_HAIKU45",
+        "right": "OAI_SOL_L",
+        "n": 2272,
+        "agreement": 0.7407570422535211,
+        "expected": 0.49994575729022017,
+        "kappa": 0.48157032656767673
+      },
+      {
+        "left": "ANT_HAIKU45",
+        "right": "OAI_SOL_M",
+        "n": 2272,
+        "agreement": 0.7411971830985915,
+        "expected": 0.49990507525788536,
+        "kappa": 0.4824926147073656
+      },
+      {
+        "left": "ANT_HAIKU45",
+        "right": "OAI_TERRA_M",
+        "n": 2272,
+        "agreement": 0.7605633802816901,
+        "expected": 0.5004784981898432,
+        "kappa": 0.5206680416145373
+      },
+      {
+        "left": "ANT_SONNET5",
+        "right": "OAI_LUNA_M",
+        "n": 2272,
+        "agreement": 0.6738556338028169,
+        "expected": 0.4714334643423924,
+        "kappa": 0.38296440619076305
+      },
+      {
+        "left": "ANT_SONNET5",
+        "right": "OAI_SOL_L",
+        "n": 2272,
+        "agreement": 0.7561619718309859,
+        "expected": 0.5015838871255703,
+        "kappa": 0.5107741867276944
+      },
+      {
+        "left": "ANT_SONNET5",
+        "right": "OAI_SOL_M",
+        "n": 2272,
+        "agreement": 0.764524647887324,
+        "expected": 0.5027718024697481,
+        "kappa": 0.5264239773965164
+      },
+      {
+        "left": "ANT_SONNET5",
+        "right": "OAI_TERRA_M",
+        "n": 2272,
+        "agreement": 0.7240316901408451,
+        "expected": 0.4860278528565761,
+        "kappa": 0.4630675778970841
+      },
+      {
+        "left": "OAI_LUNA_M",
+        "right": "OAI_SOL_L",
+        "n": 2272,
+        "agreement": 0.7134683098591549,
+        "expected": 0.49452148631223963,
+        "kappa": 0.43314763658215766
+      },
+      {
+        "left": "OAI_LUNA_M",
+        "right": "OAI_SOL_M",
+        "n": 2272,
+        "agreement": 0.704225352112676,
+        "expected": 0.49041260104641937,
+        "kappa": 0.41958013778463404
+      },
+      {
+        "left": "OAI_LUNA_M",
+        "right": "OAI_TERRA_M",
+        "n": 2272,
+        "agreement": 0.7860915492957746,
+        "expected": 0.5483283171741717,
+        "kappa": 0.5264072138285635
+      },
+      {
+        "left": "OAI_SOL_L",
+        "right": "OAI_SOL_M",
+        "n": 2272,
+        "agreement": 0.9194542253521126,
+        "expected": 0.5005315785558421,
+        "kappa": 0.8387370028019026
+      },
+      {
+        "left": "OAI_SOL_L",
+        "right": "OAI_TERRA_M",
+        "n": 2272,
+        "agreement": 0.758362676056338,
+        "expected": 0.49732041013687756,
+        "kappa": 0.5193015017588861
+      },
+      {
+        "left": "OAI_SOL_M",
+        "right": "OAI_TERRA_M",
+        "n": 2272,
+        "agreement": 0.75,
+        "expected": 0.49531071773953583,
+        "kappa": 0.5046457121493261
+      }
+    ],
+    "calibration": {
+      "ANT_HAIKU45": {
+        "nPairs": 568,
+        "repeatSame": 526,
+        "repeatRate": 0.926056338028169,
+        "swappedSame": 422,
+        "swappedRate": 0.7429577464788732
+      },
+      "ANT_SONNET5": {
+        "nPairs": 568,
+        "repeatSame": 545,
+        "repeatRate": 0.9595070422535211,
+        "swappedSame": 442,
+        "swappedRate": 0.778169014084507
+      },
+      "OAI_LUNA_M": {
+        "nPairs": 568,
+        "repeatSame": 515,
+        "repeatRate": 0.9066901408450704,
+        "swappedSame": 316,
+        "swappedRate": 0.5563380281690141
+      },
+      "OAI_SOL_L": {
+        "nPairs": 568,
+        "repeatSame": 527,
+        "repeatRate": 0.9278169014084507,
+        "swappedSame": 477,
+        "swappedRate": 0.8397887323943662
+      },
+      "OAI_SOL_M": {
+        "nPairs": 568,
+        "repeatSame": 535,
+        "repeatRate": 0.9419014084507042,
+        "swappedSame": 479,
+        "swappedRate": 0.8433098591549296
+      },
+      "OAI_TERRA_M": {
+        "nPairs": 568,
+        "repeatSame": 534,
+        "repeatRate": 0.9401408450704225,
+        "swappedSame": 421,
+        "swappedRate": 0.7411971830985915
+      }
+    }
+  },
+  "human": {
+    "savedEvents": 238,
+    "choices": 237,
+    "anonymousSessions": 22,
+    "distinctPairs": 189,
+    "maxChoicesOnOnePair": 9,
+    "pairsWithMultipleSessions": 22,
+    "comparisons": {
+      "aiJudges": {
+        "n": 237,
+        "agreement": 0.5569620253164557,
+        "expected": 0.49895850024034605,
+        "kappa": 0.11576590981771669,
+        "interval95": {
+          "lower": 0.0,
+          "upper": 0.19174574451310616,
+          "sessions": 22,
+          "iterations": 10000,
+          "method": "session-cluster-percentile"
+        }
+      },
+      "featureModel": {
+        "n": 237,
+        "agreement": 0.5907172995780591,
+        "expected": 0.49895850024034605,
+        "kappa": 0.18313612621255737,
+        "interval95": {
+          "lower": 0.07836727287284007,
+          "upper": 0.27153088726368385,
+          "sessions": 22,
+          "iterations": 10000,
+          "method": "session-cluster-percentile"
+        }
+      }
+    },
+    "asOf": "2026-10-13"
+  },
+  "notes": [
+    "The six-judge sample is the 2,272-pair evaluated vote file, not all active pairs.",
+    "Human comparisons use saved A/B choices against the existing weighted AI preference or feature-model prediction; skips and exact ties are excluded.",
+    "The 95% visitor intervals resample anonymous browser sessions as clusters; convenience sampling and repeated exposure remain limitations.",
+    "Saved choices and anonymous browser sessions are not verified distinct people. Kappa measures agreement, not correctness."
+  ]
+}

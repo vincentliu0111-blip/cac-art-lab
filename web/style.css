@@ -239,3 +239,6 @@
   .summary-actions button{width:100%;flex:1 1 100%}
   .comparison-tile .tile-link{font-size:10px}
 }
+
+.summary-heading .round-kappa{margin:12px 0 0;color:#d6e3cf;font-size:11px;line-height:1.55}
+.comparison-tile .tile-kappa{margin-top:3px;color:#e4f2c7;font-size:11px;font-weight:700}

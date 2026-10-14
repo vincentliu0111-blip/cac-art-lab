@@ -1,4 +1,4 @@
-import {buildRoundWithPreference, agreement, getInsight, chosenArtwork, isValidState, MOODS, INTERESTS} from './experience-core.mjs?v=20261013-v2';
+import {buildRoundWithPreference, agreement, cohenKappa, getInsight, chosenArtwork, isValidState, MOODS, INTERESTS} from './experience-core.mjs?v=20261013-v3';
 
 const $ = id => document.getElementById(id);
 // A new schema never backfills untimed choices from earlier prototypes.
@@ -25,6 +25,8 @@ Object.assign(COPY.en, {
   featureEyebrow:'YOUR FIRST PICK',
   compareJudge:'You × AI judges', compareModel:'You × feature model',
   compareAria:'Your choices compared with AI', compareCount:(n,d)=>`${n} of ${d} same choices`, compareNone:'No comparable choices yet',
+  kappaTile:value=>`Cohen’s κ ${value}`,
+  kappaNote:'At most 10 pairs; kappa is a rough guide only.',
   seeDetails:'See details',playAgain:'Play another round — can you match the AI more closely?',shareResult:'Share result ↗',
   linkCopied:'Link copied',shareFailed:'Could not copy. Please try again.',shareFallback:'I explored art with Follow Your Eye.',
 });
@@ -36,6 +38,8 @@ Object.assign(COPY.zh, {
   featureEyebrow:'这一轮的第一幅选择',
   compareJudge:'你的选择 × AI 裁判', compareModel:'你的选择 × 特征模型',
   compareAria:'你的选择与 AI 的比较', compareCount:(n,d)=>`${d} 组中有 ${n} 组一致`, compareNone:'暂无可比较的选择',
+  kappaTile:value=>`Cohen’s κ ${value}`,
+  kappaNote:'最多 10 组画对；kappa 仅供参考。',
   seeDetails:'查看明细',playAgain:'再来一轮，看你能不能和 AI 更合拍',shareResult:'分享结果 ↗',
   linkCopied:'分享文字和链接已复制',shareFailed:'复制失败，请重试。',shareFallback:'我在 Follow Your Eye 探索了艺术作品。',
 });
@@ -255,6 +259,12 @@ function renderSummary(focus=true) {
   setViews('play');
   const records=currentRecords(), picks=records.filter(r=>r.choice!=='skip');
   const judges=agreement(records,pairsById,'qA'), model=agreement(records,pairsById,'modelQA');
+  const judgeKappa=cohenKappa(records,pairsById,'qA');
+  const modelKappa=cohenKappa(records,pairsById,'modelQA');
+  const kappaText=value=>value===null?'—':(Math.abs(value)<.005?'0.00':value.toFixed(2));
+  $('heroJudgeKappa').textContent=t('kappaTile',kappaText(judgeKappa.kappa));
+  $('heroModelKappa').textContent=t('kappaTile',kappaText(modelKappa.kappa));
+  $('roundKappaNote').textContent=t('kappaNote');
   $('shareStatus').hidden=true;
   $('shareStatus').textContent='';
   $('summaryIntro').textContent=t('summaryIntro',picks.length,records.length-picks.length);
