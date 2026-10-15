@@ -32,15 +32,15 @@ To refresh it, export production choices with `node worker/owner_cli.mjs export-
 node worker/build_experience_manifest.mjs --check
 node worker/check_manifest.mjs
 node --test worker/worker.test.mjs worker/experience.test.mjs
-node --test tests/experience-core.test.mjs tests/experience-storage.test.mjs tests/met-experience.test.mjs
+node --test tests/experience-core.test.mjs tests/experience-storage.test.mjs tests/experience-connectivity.test.mjs tests/met-experience.test.mjs
 python3 -m unittest discover -s tests -p 'test_agreement_stats.py'
 ```
 
-Serve `web/` over HTTP for a browser preview. Choice buttons pause when online storage is unavailable; use a separate non-production collector and database to test the complete save flow. Never point a local preview at the production collector to make test selections.
+Serve `web/` over HTTP for a browser preview. A choice is held on the device until online storage confirms it; the next pair pauses after a failed save and offers a retry. Use a separate non-production collector and database to test the complete save flow. Never point a local preview at the production collector to make test selections.
 
 ## Publishing
 
-For changes to the choice dataset or collector, follow [worker setup](worker/README.md) and verify the dataset manifest, Worker health, test choice, and export before publishing `web/`. The site discloses approximate country collection before a visitor chooses.
+For changes to the choice dataset or collector, follow [worker setup](worker/README.md) and verify the dataset manifest, Worker health, test choice, and export before publishing `web/`. The About page describes saved choice fields, including approximate country and IP.
 
 The public website does not call an AI model when a visitor chooses. Its AI judgments were computed in advance.
 
